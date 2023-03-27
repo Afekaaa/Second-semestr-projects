@@ -1,37 +1,49 @@
 ﻿#include <iostream>
 #include <fstream>
 
+#include <string>
+
 #include <random>
 
 
 int getRandomNumber(const int maxNumberValue);
 bool createFileWithRandomNumber(const std::string fileName, const int amountNumbers, const int maxNumbersValue);
 
+
 bool isFileContainsSortedArray(const std::string& fileName);
 
 
-std::ofstream* createSupportFiles(const std::string fileName, const int fibonacciNumberOrder); // рализовать возврат массива вспомогательных файлов
+std::string getFileName(const int number);
+
+
+bool missingSegmentsIsEmpty(const int* missingSegments, const int fibonacciNumberOrder);
+
+void writeNextSortedSegment(std::ifstream* generalFile, std::ofstream*& files, const int fileNumber);
+void splittingFiles(std::string fileName, std::ofstream*& files, const int fibonacciNumberOrder);
+std::ofstream* createSupportFiles(const std::string fileName, const int fibonacciNumberOrder); 
 
 int* getFirstIdealPartition(const int fibonacciNumberOrder);
 int* getFirstMissingSegments(const int fibonacciNumberOrder);
+std::ofstream* getMassiveOfstreamFiles(const int fibonacciNumberOrder);
 
 int* getNextIdealPartition(const int * idealPartition, const int fibNumOrder);
 int* getNextMissingSegments(int* missingSegments, const int* idealPartition, const int* newIdealPartition, const int fibNumOrder);
 void createNextMissingSegmentsAndIdealPartition(int* missingSegments, int*& idealPartition, const int fibNumOrder);
 
-void fileSorting(const std::string fileName, const int fibonacciNumberOrder); // реализовать многофазную сортировку
 
-
+void fileSorting(const std::string fileName, const int fibonacciNumberOrder);
 int createFileAndStartSorting(const std::string fileName, const int amountNumbers, const int maxNumbersValue, const int fibonacciNumberOrder = 2);
 
 
 int main()
 {
+
     std::string fileName = "fileOfNumbers.txt";
-    const int amountNumbers = 100;
-    const int maxNumbersValue = 10000;
+    const int amountNumbers = 10;
+    const int maxNumbersValue = 100;
     const int amountTests = 1;
-    int fibonacciNumberOrder = 5;
+    int fibonacciNumberOrder = 2;
+
 
     for (int i = 1; i < amountTests + 1; ++i)
     {
@@ -81,9 +93,7 @@ bool createFileWithRandomNumber(const std::string fileName, const int amountNumb
         return false;
     
     for (int i = 0; i < amountNumbers; ++i) 
-    {
         fileOfNumbers << " " << getRandomNumber(maxNumbersValue);
-    }
 
     fileOfNumbers.close();
 
@@ -123,10 +133,27 @@ int createFileAndStartSorting(const std::string fileName, const int amountNumber
     return 1;
 }
 
+
+std::string getFileName(const int number) 
+{
+    return "file" + std::to_string(number) + ".txt";
+}
+
+
+bool missingSegmentsIsEmpty(const int* missingSegments, const int fibonacciNumberOrder)
+{
+    for (int i = 0; i < fibonacciNumberOrder; ++i)
+    {
+        if (missingSegments[i] != 0)
+            return false;
+    }
+
+    return true;
+}
+
 int* getFirstIdealPartition(const int fibonacciNumberOrder) 
 {
     int* idealPartition = new int[fibonacciNumberOrder];
-
     for (int i = 0; i < fibonacciNumberOrder; ++i) 
         idealPartition[i] = 1;
 
@@ -139,6 +166,28 @@ int* getFirstMissingSegments(const int fibonacciNumberOrder)
         missingSegments[i] = 1;
 
     return missingSegments;
+}
+
+std::ofstream* getMassiveOfstreamFiles(const int fibonacciNumberOrder) 
+{
+    int quantitySupportFiles = fibonacciNumberOrder + 1;
+    std::ofstream* files = new std::ofstream[quantitySupportFiles];
+
+    for (int i = 0; i < quantitySupportFiles; ++i)
+    {
+        std::string fileName = getFileName(i);
+        std::cout << fileName << std::endl;
+        files[i].open(getFileName(i));
+
+        if (!files[i].is_open())
+        {
+            std::cerr << "file " << i << " not opened" << std::endl;
+            exit(0);
+        }
+         
+    }
+
+    return files;
 }
 
 int* getNextIdealPartition(const int * idealPartition, const int fibNumOrder)
@@ -171,20 +220,77 @@ void createNextMissingSegmentsAndIdealPartition(int* missingSegments, int*& idea
     idealPartition = newIdealPartition;
 }
 
-std::ofstream* createSupportFiles(const std::string fileName, const int fibonacciNumberOrder) 
+void writeNextSortedSegment(std::ifstream* generalFile, std::ofstream*& files, const int fileNumber)
+{
+    int x1, x2;
+    //std::ifstream generalFile(fileName);
+
+    *generalFile >> x1;
+    files[fileNumber] << " " << x1;
+
+    while (!(*generalFile).eof())
+    {
+        *generalFile >> x2;
+
+        if (x2 >= x1)
+        {
+            x1 = x2;
+            files[fileNumber] << " " << x1;
+        }
+        else
+            //обрабатать случай, если x2 < x1. Сейчас пропадает х2 и я теряю данные. Ещё есть проблемы с записью во второй файл. 
+            break;
+    }
+
+    files[fileNumber] << " " << -1;
+}
+
+void splittingFiles(std::string fileName, std::ofstream*& files, const int fibonacciNumberOrder)
 {
     int* idealPartition = getFirstIdealPartition(fibonacciNumberOrder);
     int* missingSegments = getFirstMissingSegments(fibonacciNumberOrder);
+    int quantitySupportFiles = fibonacciNumberOrder + 1;
+    int fileNumber = 1;
 
-    std::ofstream* file = new std::ofstream[fibonacciNumberOrder];
+    std::ifstream* generalFile = new std::ifstream(fileName);
+
+    writeNextSortedSegment(generalFile, files, fileNumber);
+    missingSegments[fileNumber]--;
+
+    while (!(*generalFile).eof())
+    {
+        for (fileNumber = 1; fileNumber < quantitySupportFiles; ++fileNumber)
+        {
+            for (;missingSegments[fileNumber - 1] > 0; --missingSegments[fileNumber - 1])
+                writeNextSortedSegment(generalFile, files, fileNumber);
+            std::cout << fileNumber;
+        }
+
+        if (missingSegmentsIsEmpty)
+            createNextMissingSegmentsAndIdealPartition(missingSegments, idealPartition, fibonacciNumberOrder);
+        
+    }
 
 
-    createNextMissingSegmentsAndIdealPartition(missingSegments, idealPartition, fibonacciNumberOrder);
+    for (; fileNumber < fibonacciNumberOrder + 1; ++fileNumber)
+    {
+        for (; missingSegments[fileNumber - 1] > 0; --missingSegments[fileNumber - 1])
+        {
+            files[fileNumber] << " " << -1;
+            std::cout << fileNumber;
+        }
+    }
 
     delete[] idealPartition;
     delete[] missingSegments;
-    return file;
+}
+
+std::ofstream* createSupportFiles(const std::string fileName, const int fibonacciNumberOrder) 
+{
+    std::ofstream* files = getMassiveOfstreamFiles(fibonacciNumberOrder); //[new std::ofstream[fibonacciNumberOrder];
+    splittingFiles(fileName, files, fibonacciNumberOrder);
     
+    return files;
 }
 
 void fileSorting(const std::string fileName, const int fibonacciNumberOrder)
@@ -192,4 +298,3 @@ void fileSorting(const std::string fileName, const int fibonacciNumberOrder)
     std::ofstream* supFiles = createSupportFiles(fileName, fibonacciNumberOrder); //вернуть массив указателей на файлы для многофазной сортировки
     return;
 }
-
