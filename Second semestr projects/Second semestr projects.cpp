@@ -18,18 +18,20 @@ std::string getFileName(const int number);
 
 bool missingSegmentsIsEmpty(const int* missingSegments, const int fibonacciNumberOrder);
 
-void writeNextSortedSegment(std::ifstream* generalFile, std::ofstream*& files, int& x1, int& x2, const int fileNumber, const int fibNum);
-void splittingFiles(std::string fileName, std::ofstream*& files, const int fibonacciNumberOrder);
-std::ofstream* createSupportFiles(const std::string fileName, const int fibonacciNumberOrder); 
+void writeNextSortedSegment(std::ifstream* generalFile, std::fstream*& files, int& x1, int& x2, const int fileNumber, const int fibNum);
+void splittingFiles(std::string fileName, std::fstream *& files, const int fibonacciNumberOrder);
+std::fstream* createSupportFiles(const std::string fileName, const int fibonacciNumberOrder); 
 
 int* getFirstIdealPartition(const int fibonacciNumberOrder);
 int* getFirstMissingSegments(const int fibonacciNumberOrder);
-std::ofstream* getMassiveOfstreamFiles(const int fibonacciNumberOrder);
+std::fstream* getMassiveOfstreamFiles(const int fibonacciNumberOrder);
 
 int* getNextIdealPartition(const int * idealPartition, const int fibNumOrder);
 int* getNextMissingSegments(int* missingSegments, const int* idealPartition, const int* newIdealPartition, const int fibNumOrder);
 void createNextMissingSegmentsAndIdealPartition(int* missingSegments, int*& idealPartition, const int fibNumOrder);
 
+
+void fusionFiles(std::fstream& filesForSort, const int fibonacciNumberOrder);
 
 void fileSorting(const std::string fileName, const int fibonacciNumberOrder);
 int createFileAndStartSorting(const std::string fileName, const int amountNumbers, const int maxNumbersValue, const int fibonacciNumberOrder = 2);
@@ -136,7 +138,7 @@ int createFileAndStartSorting(const std::string fileName, const int amountNumber
 
 std::string getFileName(const int number) 
 {
-    return "file" + std::to_string(number) + ".txt";
+    return "C:\\Users\\Zykov Vladimir\\source\\repos\\Second semestr projects\\Second semestr projects\\Second semestr projects\\file" + std::to_string(number) + ".txt";
 }
 
 
@@ -166,28 +168,6 @@ int* getFirstMissingSegments(const int fibonacciNumberOrder)
         missingSegments[i] = 1;
 
     return missingSegments;
-}
-
-std::ofstream* getMassiveOfstreamFiles(const int fibonacciNumberOrder) 
-{
-    int quantitySupportFiles = fibonacciNumberOrder + 1;
-    std::ofstream* files = new std::ofstream[quantitySupportFiles];
-
-    for (int i = 0; i < quantitySupportFiles; ++i)
-    {
-        std::string fileName = getFileName(i);
-        std::cout << fileName << std::endl;
-        files[i].open(getFileName(i));
-
-        if (!files[i].is_open())
-        {
-            std::cerr << "file " << i << " not opened" << std::endl;
-            exit(0);
-        }
-         
-    }
-
-    return files;
 }
 
 int* getNextIdealPartition(const int * idealPartition, const int fibNumOrder)
@@ -220,7 +200,30 @@ void createNextMissingSegmentsAndIdealPartition(int* missingSegments, int*& idea
     idealPartition = newIdealPartition;
 }
 
-void writeNextSortedSegment(std::ifstream* generalFile, std::ofstream*& files, int& x1, int& x2, const int fileNumber, const int fibNum)
+
+std::fstream* getMassiveOfstreamFiles(const int fibonacciNumberOrder)
+{
+    int quantitySupportFiles = fibonacciNumberOrder + 1;
+    std::fstream* files = new std::fstream[quantitySupportFiles];
+
+    for (int i = 0; i < quantitySupportFiles; ++i)
+    {
+        std::string fileName = getFileName(i);
+        std::cout << fileName << std::endl;
+        files[i].open(getFileName(i), std::ios::out);
+
+        if (!files[i].is_open())
+        {
+            std::cerr << "file " << i << " not opened" << std::endl;
+            exit(0);
+        }
+
+    }
+
+    return files;
+}
+
+void writeNextSortedSegment(std::ifstream* generalFile, std::fstream*& files, int& x1, int& x2, const int fileNumber, const int fibNum)
 {
     files[fileNumber] << " " << x1;
 
@@ -237,7 +240,7 @@ void writeNextSortedSegment(std::ifstream* generalFile, std::ofstream*& files, i
     }
 }
 
-void splittingFiles(std::string fileName, std::ofstream*& files, const int fibonacciNumberOrder)
+void splittingFiles(std::string fileName, std::fstream *& files, const int fibonacciNumberOrder)
 {
     int firstElem, secondElem;
     int* idealPartition = getFirstIdealPartition(fibonacciNumberOrder);
@@ -284,14 +287,14 @@ void splittingFiles(std::string fileName, std::ofstream*& files, const int fibon
                 {
                     files[fileNumber] << " " << -1;
                 }
-
                 firstElem = secondElem;
-                std::cout << fileNumber << ": ";
             }
+
+            std::cout << fileNumber << ": ";
             std::cout << missingSegments[fileNumber - 1] << std::endl;
         }
 
-        if (missingSegmentsIsEmpty)
+        if (missingSegmentsIsEmpty and !generalFile->eof())
             createNextMissingSegmentsAndIdealPartition(missingSegments, idealPartition, fibonacciNumberOrder);
         
     }
@@ -306,20 +309,28 @@ void splittingFiles(std::string fileName, std::ofstream*& files, const int fibon
         }
     }
 
+    generalFile->close();
     delete[] idealPartition;
     delete[] missingSegments;
 }
 
-std::ofstream* createSupportFiles(const std::string fileName, const int fibonacciNumberOrder) 
+std::fstream* createSupportFiles(const std::string fileName, const int fibonacciNumberOrder)
 {
-    std::ofstream* files = getMassiveOfstreamFiles(fibonacciNumberOrder); //[new std::ofstream[fibonacciNumberOrder];
+    std::fstream* files = getMassiveOfstreamFiles(fibonacciNumberOrder); 
     splittingFiles(fileName, files, fibonacciNumberOrder);
     
+    for (int i = 0; i < fibonacciNumberOrder + 1; ++i)
+        files[i].close();
+
     return files;
 }
 
+
 void fileSorting(const std::string fileName, const int fibonacciNumberOrder)
 {
-    std::ofstream* supFiles = createSupportFiles(fileName, fibonacciNumberOrder); //вернуть массив указателей на файлы для многофазной сортировки
+    std::fstream* filesForSort = createSupportFiles(fileName, fibonacciNumberOrder); // запись всегда ведется в supFiles[0]
+
+    //fusionFiles(filesForSort, fibonacciNumberOrder);
+
     return;
 }
