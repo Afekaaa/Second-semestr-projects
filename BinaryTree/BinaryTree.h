@@ -11,6 +11,7 @@ public:
 	{
 	public:
 		Node();
+		Node(Node& other);
 		Node(int key);
 		~Node() = default;
 
@@ -19,7 +20,7 @@ public:
 		Node* getRightChild() const;
 		Node* getLeftChild() const;
 
-		void setRigthChild(Node* rightChild);
+		void setRightChild(Node* rightChild);
 		void setLeftChild(Node* leftChild);
 
 	private:
@@ -35,14 +36,14 @@ public:
 
 	Node* getRoot() const;
 	bool isEmpty() const;
-	int getHeight() const;
+	int getHeight(Node* root) const;
 	int getAmountNode(Node* root) const;
 
-	void addNode();
-	void deleteNode();
-	void clear();
+	Node* addNode(Node* root, int key);
+	bool deleteNode(int key);
+	void clear(Node* root);
 
-	std::vector<int> getAllKeys() const;
+	std::vector<int> getAllKeys(std::vector<int> binaryTreeValues, Node* root) const;
 	void printTree() const;
 
 	BinaryTree& operator= (const BinaryTree& other);
