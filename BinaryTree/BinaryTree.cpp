@@ -1,4 +1,5 @@
 ﻿#include "BinaryTree.h"
+#include <random>
 
 BinaryTree::BinaryTree(const BinaryTree& other)
 {
@@ -23,7 +24,7 @@ bool BinaryTree::isEmpty() const
 	return false;
 }
 
-int BinaryTree::getHeight(Node* root) const
+int BinaryTree::getHeight(const Node * root) const
 {
 	int rightHeight = 0;
 	int leftHeight = 0;
@@ -45,7 +46,7 @@ int BinaryTree::getHeight(Node* root) const
 	return maxHeight;
 }
 
-int BinaryTree::getAmountNode(Node* root) const
+int BinaryTree::getAmountNode(const Node * root) const
 {
 	int counterNode = 0;
 
@@ -60,8 +61,22 @@ int BinaryTree::getAmountNode(Node* root) const
 	return counterNode;
 }
 
-BinaryTree::Node* BinaryTree::addNode(Node* root, int key)
+bool BinaryTree::keyInTree(const int key) const
 {
+	std::vector<int> binaryTreeValues = getAllKeys(m_root, binaryTreeValues);
+
+	for (int i = 0; i < binaryTreeValues.size(); ++i)
+	{
+		if (key == binaryTreeValues[i])
+			return true;
+	}
+
+	return false;
+}
+
+BinaryTree::Node* BinaryTree::addNode(Node* root, const int key)
+{
+	srand(time_t(0));
 	if (!root)
 		root = new Node(key);
 	else if (rand() % 2)
@@ -72,7 +87,14 @@ BinaryTree::Node* BinaryTree::addNode(Node* root, int key)
 	return root;
 }
 
-bool deleteNode(int key);
+bool BinaryTree::deleteNode(const int key)
+{
+	if (!keyInTree(key))
+	{
+		return false;
+	}
+	
+}
 
 void BinaryTree::clear(Node* root)
 {
@@ -94,13 +116,13 @@ void BinaryTree::clear(Node* root)
 	delete root;
 }
 
-std::vector<int> BinaryTree::getAllKeys(std::vector<int> binaryTreeValues = {}, Node* root = nullptr) const
+std::vector<int> BinaryTree::getAllKeys(const Node * root = nullptr, std::vector<int> binaryTreeValues = {}) const
 {
 	if (!root)
 	{
 		binaryTreeValues.push_back(root->getKey());
-		binaryTreeValues = BinaryTree::getAllKeys(binaryTreeValues, root->getRightChild());
-		binaryTreeValues = BinaryTree::getAllKeys(binaryTreeValues, root->getLeftChild());
+		binaryTreeValues = BinaryTree::getAllKeys(root->getRightChild(), binaryTreeValues);
+		binaryTreeValues = BinaryTree::getAllKeys(root->getLeftChild(), binaryTreeValues);
 	}
 
 	return binaryTreeValues;
@@ -111,4 +133,13 @@ void BinaryTree::printTree() const
 
 }
 
-BinaryTree& operator= (const BinaryTree& other);
+BinaryTree& BinaryTree::operator= (const BinaryTree& other)
+{
+	if (m_root != other.getRoot())
+	{
+		clear(m_root);
+		m_root = new Node(*other.getRoot());
+	}
+
+	return *this;
+}
