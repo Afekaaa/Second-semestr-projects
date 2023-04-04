@@ -43,11 +43,10 @@ int createFileAndStartSorting(const std::string fileName, const int amountNumber
 
 int main()
 {
-
     std::string fileName = "fileOfNumbers.txt";
-    const int amountNumbers = 20;
-    const int maxNumbersValue = 100;
-    const int amountTests = 1000;
+    const int amountNumbers = 2;
+    const int maxNumbersValue = 10;
+    const int amountTests = 10;
     int fibonacciNumberOrder = 2;
 
 
@@ -56,14 +55,14 @@ int main()
         switch (createFileAndStartSorting(fileName, amountNumbers, maxNumbersValue, fibonacciNumberOrder))
         {
         case 1:
-            //std::cout << i << ". File was sorted" << std::endl;
+            std::cout << i << ". File was sorted" << std::endl;
             break;
         case -1: 
             std::cout << i << ". File wasn't created" << std::endl;
             break;
         case -2:
             std::cout << i << ". File wasn't sorted" << std::endl;
-            exit(0);
+           // exit(0);
             break;
 
         }
@@ -213,6 +212,7 @@ void createNextMissingSegmentsAndIdealPartition(int* missingSegments, int*& idea
     int* newIdealPartition = getNextIdealPartition(idealPartition, fibNumOrder);
     missingSegments = getNextMissingSegments(missingSegments, idealPartition, newIdealPartition, fibNumOrder);
 
+
     delete idealPartition;
     idealPartition = newIdealPartition;
 }
@@ -285,6 +285,33 @@ bool splittingTests(std::fstream** files, int* idealPartition, int* missingSegme
     return true;
 }
 
+void writeSecondElement(std::ifstream* generalFile, std::fstream** files, int*& missingSegments, int& firstElem, int& secondElem, int& fileNumber, const int fibonacciNumberOrder)
+{
+    if (secondElem >= firstElem and generalFile->eof())
+    {
+        (*files[fileNumber]) << " " << secondElem << " " << -1;
+    }
+    else if (secondElem < firstElem and generalFile->eof())
+    {
+        (*files[fileNumber]) << " " << -1;
+        if (missingSegments[fileNumber - 1] > 1)
+        {
+            --missingSegments[fileNumber - 1];
+            (*files[fileNumber]) << " " << secondElem << " " << -1;
+        }
+        else
+        {
+            --missingSegments[fileNumber % fibonacciNumberOrder];
+            (*files[fileNumber % fibonacciNumberOrder + 1]) << " " << secondElem << " " << -1;
+        }
+    }
+    else if (!generalFile->eof() and secondElem < firstElem) //можно просто оставить else
+    {
+        (*files[fileNumber]) << " " << -1;
+    }
+    firstElem = secondElem;
+}
+
 void splittingFiles(std::string fileName, std::fstream** files, const int fibonacciNumberOrder)
 {
     int firstElem, secondElem;
@@ -298,9 +325,9 @@ void splittingFiles(std::string fileName, std::fstream** files, const int fibona
     (*generalFile) >> firstElem;
 
     writeNextSortedSegment(generalFile, files, firstElem, secondElem, fileNumber, fibonacciNumberOrder);
-    (*files[fileNumber]) << " " << -1;
-    missingSegments[fileNumber - 1]--;
-    firstElem = secondElem;
+    missingSegments[fileNumber - 1]--;   
+
+    writeSecondElement(generalFile, files, missingSegments, firstElem, secondElem, fileNumber, fibonacciNumberOrder);
 
     while (!generalFile->eof())
     {
@@ -309,30 +336,7 @@ void splittingFiles(std::string fileName, std::fstream** files, const int fibona
             for (; missingSegments[fileNumber - 1] > 0 and !generalFile->eof(); --missingSegments[fileNumber - 1])
             {
                 writeNextSortedSegment(generalFile, files, firstElem, secondElem, fileNumber, fibonacciNumberOrder);
-
-                if (secondElem >= firstElem and generalFile->eof())
-                {
-                    (*files[fileNumber]) << " " << secondElem << " " << -1;
-                }
-                else if (secondElem < firstElem and generalFile->eof()) 
-                {
-                    (*files[fileNumber]) << " " << -1;
-                    if (missingSegments[fileNumber - 1] > 1)
-                    {
-                        --missingSegments[fileNumber - 1];
-                        (*files[fileNumber]) << " " << secondElem << " " << -1;
-                    }
-                    else
-                    {
-                        --missingSegments[fileNumber % fibonacciNumberOrder];
-                        (*files[fileNumber % fibonacciNumberOrder + 1]) << " " << secondElem << " " << -1;
-                    }
-                }
-                else if (!generalFile->eof() and secondElem < firstElem) //можно просто оставить else
-                {
-                    (*files[fileNumber]) << " " << -1;
-                }
-                firstElem = secondElem;
+                writeSecondElement(generalFile, files, missingSegments, firstElem, secondElem, fileNumber, fibonacciNumberOrder);
             }
 
             //std::cout << fileNumber << ": ";
@@ -341,7 +345,7 @@ void splittingFiles(std::string fileName, std::fstream** files, const int fibona
 
         if (missingSegmentsIsEmpty(missingSegments, fibonacciNumberOrder) and !generalFile->eof())
             createNextMissingSegmentsAndIdealPartition(missingSegments, idealPartition, fibonacciNumberOrder);
-        
+        //std::puts("HUBKL");
     }
 
     if (!missingSegmentsIsTrue(missingSegments, fibonacciNumberOrder))
@@ -360,6 +364,7 @@ void splittingFiles(std::string fileName, std::fstream** files, const int fibona
     //splittingTests(files, idealPartition, missingSegments, fibonacciNumberOrder);
 
     generalFile->close();
+
     delete[] idealPartition;
     delete[] missingSegments;
 }
@@ -399,7 +404,7 @@ int fusionFiles(std::fstream** filesForSort, const int fibonacciNumberOrder)
         while (!filesForSort[fibonacciNumberOrder]->eof())
         {
             //слить один отрезок из каждого файла. fusionOneSortedSegment(std::fstream** filesForSort, const int numberOfFiles)
-           // std::cout << "1. first while" << std::endl;
+            //std::cout << "1. first while" << std::endl;
             fusionOneSortedSegment(filesForSort, fibonacciNumberOrder);
             //std::cout << "2. first while" << std::endl;
         }
@@ -413,6 +418,8 @@ int fusionFiles(std::fstream** filesForSort, const int fibonacciNumberOrder)
         filesForSort[i]->close();
 
     //std::cout << numberOfFiles - 1 - ((indexOfIteration - 2)% numberOfFiles) << std::endl;
+    if (indexOfIteration == 1)
+        return 0;
 
     return numberOfFiles - 1 - ((indexOfIteration - 2) % numberOfFiles);
 }
@@ -506,6 +513,7 @@ int createFileAndStartSorting(const std::string fileName, const int amountNumber
         return -1;
 
     int numberSortedFiles = fileSorting(fileName, fibonacciNumberOrder);
+    std::cout << numberSortedFiles << std::endl;
 
     if (!isFileContainsSortedArray(getFileName(numberSortedFiles)))
     {
