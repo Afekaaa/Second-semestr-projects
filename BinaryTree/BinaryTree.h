@@ -28,22 +28,26 @@ public:
 		int m_key;
 		Node* m_rightChild = nullptr;
 		Node* m_leftChild = nullptr;
-		Node* m_parent = nullptr;
+		Node* m_parent = nullptr; // удалить, если не понадобится
 	};
 
 	BinaryTree() = default;
 	BinaryTree(const BinaryTree& other);
 	~BinaryTree();
 
-	Node* getRoot() const;
 	bool isEmpty() const;
+	bool keyInTree(const int key) const;
+
+	Node* getRoot() const;
 	int getHeight(const Node * root) const;
 	int getAmountNode(const Node * root) const;
-	bool keyInTree(const int key) const;
+	int getMinKey(const Node* root, const int key) const;
+	int getMaxKey(const Node* root, const int key) const;
 
 	Node* addNode(Node* root, const int key);
 	bool deleteNode(const int key);
 	void clear(Node* root);
+	void clearAllTree();
 
 	std::vector<int> getAllKeys(const Node * root, std::vector<int> binaryTreeValues) const;
 	void printTree() const;

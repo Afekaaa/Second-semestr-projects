@@ -1,4 +1,5 @@
 ﻿#include "BinaryTree.h"
+#include <iostream>
 #include <random>
 
 BinaryTree::BinaryTree(const BinaryTree& other)
@@ -59,6 +60,25 @@ int BinaryTree::getAmountNode(const Node * root) const
 	}
 
 	return counterNode;
+}
+
+int BinaryTree::getMinKey(const Node* root, const int key) const
+{ // 1) Проверка на существование дерева (isEmpty); Если дерево пусто - минимального элемента нет, если не пусто, то начинает алгоритм поиска минимального числа.
+	int rightMinKey;
+	int leftMinKey;
+	int minKey;
+
+	if (!root)
+	{
+		return key;
+	}
+
+	minKey = root->getKey();
+		
+	rightMinKey = getMinKey(root->getRightChild(), minKey);
+	leftMinKey = getMinKey(root->getLeftChild(), minKey);
+
+	return std::min({ minKey, rightMinKey, leftMinKey });;
 }
 
 bool BinaryTree::keyInTree(const int key) const
@@ -142,4 +162,10 @@ BinaryTree& BinaryTree::operator= (const BinaryTree& other)
 	}
 
 	return *this;
+}
+
+void BinaryTree::clearAllTree()
+{
+	clear(m_root);
+	m_root = nullptr;
 }
