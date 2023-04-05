@@ -12,17 +12,17 @@ BinaryTree::~BinaryTree()
 	clear(m_root);
 }
 
-BinaryTree::Node* BinaryTree::getRoot() const
-{
-	return m_root;
-}
-
 bool BinaryTree::isEmpty() const
 {
 	if (!m_root)
 		return true;
 
 	return false;
+}
+
+BinaryTree::Node* BinaryTree::getRoot() const
+{
+	return m_root;
 }
 
 int BinaryTree::getHeight(const Node * root) const
@@ -46,7 +46,6 @@ int BinaryTree::getHeight(const Node * root) const
 
 	return maxHeight;
 }
-
 int BinaryTree::getAmountNode(const Node * root) const
 {
 	int counterNode = 0;
@@ -72,7 +71,6 @@ int BinaryTree::getMinKey(const Node* root) const
 
 	return getMinKey(root, root->getKey());
 }
-
 int BinaryTree::getMinKey(const Node* root, const int key) const
 {
 	if (!root)
@@ -95,7 +93,6 @@ int BinaryTree::getMaxKey(const Node* root) const
 
 	return getMaxKey(root, root->getKey());
 }
-
 int BinaryTree::getMaxKey(const Node* root, const int key) const
 {
 	if (!root)
@@ -106,6 +103,15 @@ int BinaryTree::getMaxKey(const Node* root, const int key) const
 	int leftMaxKey = getMaxKey(root->getLeftChild(), maxKey);
 
 	return std::min({ maxKey, rightMaxKey, leftMaxKey });
+}
+
+int BinaryTree::getMaxKey() const
+{
+	return getMaxKey(m_root);
+}
+int BinaryTree::getMinKey() const
+{
+	return getMinKey(m_root);
 }
 
 bool BinaryTree::keyInTree(const int key) const

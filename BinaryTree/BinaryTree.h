@@ -44,6 +44,9 @@ public:
 	int getMinKey(const Node* root) const;
 	int getMaxKey(const Node* root) const;
 
+	int getMaxKey() const;
+	int getMinKey() const;
+
 	Node* addNode(Node* root, const int key);
 	bool deleteNode(const int key);
 	void clear(Node* root);
