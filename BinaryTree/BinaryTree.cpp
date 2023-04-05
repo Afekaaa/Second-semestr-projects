@@ -62,23 +62,50 @@ int BinaryTree::getAmountNode(const Node * root) const
 	return counterNode;
 }
 
-int BinaryTree::getMinKey(const Node* root, const int key) const
-{ // 1) Проверка на существование дерева (isEmpty); Если дерево пусто - минимального элемента нет, если не пусто, то начинает алгоритм поиска минимального числа.
-	int rightMinKey;
-	int leftMinKey;
-	int minKey;
-
+int BinaryTree::getMinKey(const Node* root) const
+{
 	if (!root)
 	{
-		return key;
+		std::cerr << "Tree is empty" << std::endl;
+		exit(0);
 	}
 
-	minKey = root->getKey();
-		
-	rightMinKey = getMinKey(root->getRightChild(), minKey);
-	leftMinKey = getMinKey(root->getLeftChild(), minKey);
+	return getMinKey(root, root->getKey());
+}
 
-	return std::min({ minKey, rightMinKey, leftMinKey });;
+int BinaryTree::getMinKey(const Node* root, const int key) const
+{
+	if (!root)
+		return key;
+
+	int minKey = root->getKey();
+	int rightMinKey = getMinKey(root->getRightChild(), minKey);
+	int leftMinKey = getMinKey(root->getLeftChild(), minKey);
+
+	return std::min({ minKey, rightMinKey, leftMinKey });
+}
+
+int BinaryTree::getMaxKey(const Node* root) const
+{
+	if (!root)
+	{
+		std::cerr << "Tree is empty" << std::endl;
+		exit(0);
+	}
+
+	return getMaxKey(root, root->getKey());
+}
+
+int BinaryTree::getMaxKey(const Node* root, const int key) const
+{
+	if (!root)
+		return key;
+
+	int maxKey = root->getKey();
+	int rightMaxKey = getMaxKey(root->getRightChild(), maxKey);
+	int leftMaxKey = getMaxKey(root->getLeftChild(), maxKey);
+
+	return std::min({ maxKey, rightMaxKey, leftMaxKey });
 }
 
 bool BinaryTree::keyInTree(const int key) const

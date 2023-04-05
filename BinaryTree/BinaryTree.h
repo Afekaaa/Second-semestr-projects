@@ -41,8 +41,8 @@ public:
 	Node* getRoot() const;
 	int getHeight(const Node * root) const;
 	int getAmountNode(const Node * root) const;
-	int getMinKey(const Node* root, const int key) const;
-	int getMaxKey(const Node* root, const int key) const;
+	int getMinKey(const Node* root) const;
+	int getMaxKey(const Node* root) const;
 
 	Node* addNode(Node* root, const int key);
 	bool deleteNode(const int key);
@@ -57,6 +57,8 @@ public:
 
 private:
 	Node* m_root = nullptr;
+	int getMinKey(const Node* root, const int key) const;
+	int getMaxKey(const Node* root, const int key) const;
 
 };
 
