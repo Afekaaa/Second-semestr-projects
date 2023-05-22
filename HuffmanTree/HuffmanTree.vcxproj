@@ -140,6 +140,10 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="HuffmanTree.cpp" />
+    <ClCompile Include="HuffmanNode.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="HuffmanTree.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
