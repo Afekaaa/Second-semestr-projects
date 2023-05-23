@@ -34,7 +34,7 @@ public:
 		Node* operator ++ ();
 
 	private:
-		std::string m_symbols;
+		std::string m_symbols = "\0";
 		int m_frequency = 1;
 		Node* m_leftChild = nullptr;
 		Node* m_rightChild = nullptr;
