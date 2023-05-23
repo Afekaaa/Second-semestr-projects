@@ -14,7 +14,7 @@ HuffmanTree::Node::Node(const std::string symbols)
 
 HuffmanTree::Node::Node(const char symbol)
 {
-    m_symbols = symbol + '\0';
+    m_symbols = std::string(1, symbol);
 }
 
 int HuffmanTree::Node::getFrequency() const
@@ -44,17 +44,19 @@ void HuffmanTree::Node::setFrequency(const int frequency)
 
 void HuffmanTree::Node::setLeftChild(const Node* leftChild)
 {
-    delete m_leftChild;
+    if (!m_leftChild)
+        delete m_leftChild;
     m_leftChild = new Node(leftChild->getSymbols());
 }
 
 void HuffmanTree::Node::setRightChild(const Node* rightChild)
 {
-    delete m_rightChild;
+    if (!m_rightChild)
+        delete m_rightChild;
     m_rightChild = new Node(rightChild->getSymbols());
 }
 
-HuffmanTree::Node* HuffmanTree::Node::operator + (Node other)
+HuffmanTree::Node* HuffmanTree::Node::operator + (const Node other)
 {   
     Node* newNode = new Node(m_symbols + other.getSymbols());
     newNode->setLeftChild(this);
