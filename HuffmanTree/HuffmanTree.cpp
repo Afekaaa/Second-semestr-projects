@@ -18,8 +18,9 @@ std::string HuffmanTree::build(std::string textBeforEncryption)
 	std::list<SymbolCode> symbolsCode;
 
 	encodeSymbols(symbolsCode);
+	std::string textAfterEncryption = getEncryptionText(symbolsCode, textBeforEncryption);
 
-	return getEncryptionText(symbolsCode, textBeforEncryption);
+	return textAfterEncryption;
 }
 
 int HuffmanTree::encode(std::string textBeforEncryption, std::string* textAfterEncryption) const
@@ -45,6 +46,7 @@ void HuffmanTree::createSortedNodes(std::list<Node*>& nodes, std::string textBef
 
 	for (int i = 0; textBeforeEncryption[i]; i++)
 	{
+		//std::cout << textBeforeEncryption[i]  << " number is " << T[textBeforeEncryption[i]] << std::endl;
 		if (!T[textBeforeEncryption[i]])
 		{
 			T[textBeforeEncryption[i]] = 1;
@@ -56,7 +58,8 @@ void HuffmanTree::createSortedNodes(std::list<Node*>& nodes, std::string textBef
 			{
 				if (iter->getSymbols()[0] == textBeforeEncryption[i])
 				{
-					iter++;
+					iter->setFrequency(iter->getFrequency() + 1);
+					break;
 				}
 			}
 		}
@@ -70,18 +73,22 @@ void HuffmanTree::createSortedNodes(std::list<Node*>& nodes, std::string textBef
 	while (nodes.size() != 1)
 	{
 		auto firstNode = nodes.begin();
-		auto secondNode = nodes.begin()++;
+		auto secondNode = ++nodes.begin();
 
 		Node* newNode = getJoinedTwoNodes(*firstNode, *secondNode); // выделение памяти
 		setNewNodeToList(nodes, newNode);
-
-		nodes.erase(firstNode, secondNode);
+		nodes.erase(firstNode, ++secondNode);
 	}
 }
 
 HuffmanTree::Node* HuffmanTree::getJoinedTwoNodes(Node* firstNode, Node* secondNode) const
 {
-	Node* newNode = new Node(*(*firstNode + *secondNode));
+	std::string newSymbols = secondNode->getSymbols().append(firstNode->getSymbols());
+	Node* newNode = new Node(newSymbols);
+	newNode->setFrequency(firstNode->getFrequency() + secondNode->getFrequency());
+	newNode->setLeftChild(firstNode);
+	newNode->setRightChild(secondNode);
+
 	return newNode;
 }
 
@@ -99,12 +106,12 @@ void HuffmanTree::encodeSymbols(std::list<SymbolCode>& symbolsCode) const
 		{
 			if (symbolInSymbols(treeIter->getLeftChild()->getSymbols(), symbol)) {
 				treeIter = treeIter->getLeftChild();
-				symbolCode += '0';
+				symbolCode += "0";
 			}
 			else
 			{
 				treeIter = treeIter->getRightChild();
-				symbolCode += '1';
+				symbolCode += "1";
 			}
 		}
 
@@ -115,15 +122,14 @@ void HuffmanTree::encodeSymbols(std::list<SymbolCode>& symbolsCode) const
 void HuffmanTree::setNewNodeToList(std::list<Node*>& nodes, Node* newNode) const
 {
 	auto posNode = nodes.begin();
-	auto nextNode = posNode++;
 
-	while ((*posNode)->getFrequency() < (*nextNode)->getFrequency())
-	{
+	while (posNode != nodes.end() and (*posNode)->getFrequency() < newNode->getFrequency())
 		posNode++;
-		nextNode++;
-	}
-		
-	nodes.insert(posNode, newNode);
+
+	if (posNode != nodes.end())
+		nodes.insert(posNode, newNode);
+	else
+		nodes.push_back(newNode);
 }
 
 std::string HuffmanTree::getEncryptionText(std::list<SymbolCode> symbolsCode, std::string textBeforEncryption)
@@ -176,8 +182,9 @@ void HuffmanTree::clear(Node* root)
 
 int main()
 {
-	std::string textBeforEncode = "В траве сидел кузнечик\0";
-	
+	std::string textBeforEncode = "There was a green grasshopper in the grass\0";
+	//std::cout << textBeforEncode.size();
+
 	HuffmanTree encodeText;
 	std::cout << encodeText.build(textBeforEncode) << std::endl;
 
