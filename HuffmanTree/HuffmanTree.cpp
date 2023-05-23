@@ -1,21 +1,126 @@
-﻿// HuffmanTree.cpp : Этот файл содержит функцию "main". Здесь начинается и заканчивается выполнение программы.
-//
+﻿#include "HuffmanTree.h"
 
-#include <iostream>
-#include "HuffmanTree.h"
 
-int main()
+std::string HuffmanTree::build(std::string textBeforEncryption)
 {
-    std::cout << "Hello World!\n";
+	std::list<Node*> nodes;
+
+	createNodes(nodes, textBeforEncryption);
+
+	nodes.sort([](Node* first, Node* second)
+		{
+			return first->getFrequency() < second->getFrequency();
+		});
+
+	while (nodes.size() != 1)
+	{
+		auto firstNode = nodes.begin();
+		auto secondNode = nodes.begin()++;
+
+		Node* newNode = getJoinedTwoNodes(*firstNode, *secondNode);
+
+		setNewNodeToList(nodes, newNode);
+		nodes.erase(firstNode, secondNode);
+	}
+
+	m_root = nodes.front();
+	std::list<SymbolCode> symbolsCode;
+
+	for (int i = 0; m_root->getSymbols()[i]; i++)
+	{
+		auto treeIter = m_root;
+
+		std::string symbolCode;
+		char symbol = m_root->getSymbols()[i];
+
+		while (treeIter->getLeftChild() or treeIter->getRightChild())
+		{
+			if (symbolInSymbols(treeIter->getLeftChild()->getSymbols(), symbol)) {
+				treeIter = treeIter->getLeftChild();
+				symbolCode += '0';
+			}
+			else
+			{
+				treeIter = treeIter->getRightChild();
+				symbolCode += '1';
+			}
+		}
+
+		symbolsCode.push_back({ symbol, symbolCode });
+	}
+
+	std::string textAfterEncryption;
+
+	for (int i = 0; textBeforEncryption[i]; i++)
+	{
+		textAfterEncryption += getCode(symbolsCode, textBeforEncryption[i]);
+	}
+
+	return textAfterEncryption;
 }
 
-// Запуск программы: CTRL+F5 или меню "Отладка" > "Запуск без отладки"
-// Отладка программы: F5 или меню "Отладка" > "Запустить отладку"
+void HuffmanTree::createNodes(std::list<Node*>& nodes, std::string textBeforEncryption) const
+{
+	int T[256] = { 0 };
 
-// Советы по началу работы 
-//   1. В окне обозревателя решений можно добавлять файлы и управлять ими.
-//   2. В окне Team Explorer можно подключиться к системе управления версиями.
-//   3. В окне "Выходные данные" можно просматривать выходные данные сборки и другие сообщения.
-//   4. В окне "Список ошибок" можно просматривать ошибки.
-//   5. Последовательно выберите пункты меню "Проект" > "Добавить новый элемент", чтобы создать файлы кода, или "Проект" > "Добавить существующий элемент", чтобы добавить в проект существующие файлы кода.
-//   6. Чтобы снова открыть этот проект позже, выберите пункты меню "Файл" > "Открыть" > "Проект" и выберите SLN-файл.
+	for (int i = 0; textBeforEncryption[i]; i++)
+	{
+		if (!T[textBeforEncryption[i]])
+		{
+			T[textBeforEncryption[i]] = 1;
+			nodes.push_back(new Node(textBeforEncryption[i]));
+		}
+		else
+		{
+			auto iter = nodes.begin();
+
+			for (auto iter = nodes.begin(); iter != nodes.end(); iter++)
+			{
+				if ((*iter)->getSymbols()[0] == textBeforEncryption[i])
+				{
+					(*iter)++;
+				}
+			}
+		}
+	}
+}
+
+HuffmanTree::Node* HuffmanTree::getJoinedTwoNodes(Node* firstNode, Node* secondNode) const
+{
+	Node* newNode = new Node(*(*firstNode + *secondNode));
+	return newNode;
+}
+
+void HuffmanTree::setNewNodeToList(std::list<Node*>& nodes, Node* newNode) const
+{
+	auto posNode = nodes.begin();
+	auto nextNode = posNode++;
+
+	while ((*posNode)->getFrequency() < (*nextNode)->getFrequency())
+	{
+		posNode++;
+		nextNode++;
+	}
+		
+	nodes.insert(posNode, newNode);
+}
+
+bool HuffmanTree::symbolInSymbols(std::string symbols, char symbol) const
+{
+	for (int i = 0; symbols[i]; i++)
+	{
+		if (symbols[i] == symbol)
+			return true;
+	}
+
+	return false;
+}
+
+std::string HuffmanTree::getCode(std::list<SymbolCode> symbolsCode, const char symbol) const
+{
+	for (auto iter : symbolsCode)
+	{
+		if (iter.symbol == symbol)
+			return iter.code;
+	}
+}
