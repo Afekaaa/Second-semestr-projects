@@ -4,24 +4,26 @@
 class HashTable
 {
 public:
-	class String
+	class BlockOfChain
 	{
 	public:
-		String();
-		String(String& otherString);
+		BlockOfChain();
+		BlockOfChain(const int key);
+		BlockOfChain(BlockOfChain& otherString);
+		~BlockOfChain();
 
 		bool isEmpty() const;
+		void setEmpty(const bool empty);
 
 		int key() const;
-		String* next();
+		BlockOfChain* next();
 
 		void setKey(const int key);
-		void setNext(const String* nextString);
+		void setNext(const BlockOfChain* nextString);
 
 	private:
 		int m_key = 0;
-		String* m_next = nullptr;
-		
+		BlockOfChain* m_next = nullptr;
 		bool m_empty = true;
 	};
 
@@ -33,20 +35,18 @@ public:
 	int hash0(int key) const;
 
 	int size() const;
-	String* hashTable() const;
 
 	void setElem(const int key);
-	int delElem(const int key);
+	bool delElem(const int key);
 	bool contains(const int key);
 
 	void show();
 
 	HashTable& operator = (const HashTable otherHashTable);
-	String*& operator [] (const int hash);
+	BlockOfChain*& operator [] (const int hash);
 
 private:
-	String** m_hashTable = nullptr;
+	BlockOfChain** m_hashTable = nullptr;
 	int m_size = 0;
-	int m_hash0 = 0;
 };
 
