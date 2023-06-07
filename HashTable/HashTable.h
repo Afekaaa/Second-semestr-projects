@@ -28,6 +28,7 @@ public:
 	};
 
 	HashTable();
+	HashTable(const int* mas, const int size);
 	HashTable(HashTable& otherHashTable);
 	~HashTable();
 

@@ -3,11 +3,27 @@
 
 HashTable::HashTable()
 {
-	m_size = 10;
+	m_size = 7;
 	m_hashTable = new BlockOfChain*[m_size];
 	for (int i = 0; i < m_size; ++i)
 	{
 		m_hashTable[i] = new BlockOfChain();
+	}
+}
+
+HashTable::HashTable(const int* mas, const int size)
+{
+	m_size = size + 10;
+	m_hashTable = new BlockOfChain*[m_size];
+	
+	for (int i = 0; i < size; ++i)
+	{
+		m_hashTable[i] = new BlockOfChain(mas[i]);
+	}
+
+	for (int i = size; i < m_size; ++i)
+	{
+		m_hashTable[i] = new BlockOfChain;
 	}
 }
 
@@ -70,7 +86,7 @@ void HashTable::setElem(const int key)
 
 bool HashTable::delElem(const int key)
 {
-	if (!contains)
+	if (!contains(key))
 		return false;
 
 	int hash = hash0(key);
@@ -140,8 +156,24 @@ bool HashTable::contains(const int key)
 
 void HashTable::show()
 {
+	std::cout << "Hash\t" << "Key\t" << "Next\t" << std::endl;
+
 	for (int i = 0; i < m_size; i++)
-		std::cout << i << m_hashTable[i]->key() << " " << m_hashTable[i]->next();
+	{
+		if (m_hashTable[i]->isEmpty())
+			std::cout << i << "\t" << "empty\t empty\t" << std::endl;
+		else
+		{
+			std::cout << i << "\t" << m_hashTable[i]->key() << "\t";
+			BlockOfChain* runner = m_hashTable[i]->next();
+
+			while (runner)
+				std::cout << runner->key() << "\t";
+
+			std::cout << std::endl;
+		}
+
+	}
 }
 
 HashTable& HashTable::operator = (HashTable otherHashTable)
@@ -149,7 +181,9 @@ HashTable& HashTable::operator = (HashTable otherHashTable)
 	m_size = otherHashTable.size();
 	delete [] m_hashTable;
 
-	HashTable(otherHashTable);
+	//HashTable(otherHashTable);
+
+	return *this;
 }
 
 HashTable::BlockOfChain*& HashTable::operator [] (const int hash)
@@ -158,18 +192,17 @@ HashTable::BlockOfChain*& HashTable::operator [] (const int hash)
 		return m_hashTable[hash];
 }
 
-
-
-
-
-
-
-
-
-
-
+#include <random>
 
 int main()
 {
-    std::cout << "Hello World!\n";
+	srand(time(0));
+	const int lenMas = 10;
+	int* mas = new int[lenMas];
+
+	for (int i = 0; i < lenMas; ++i)
+		mas[i] = rand() % 100;
+
+	HashTable T(mas, lenMas);
+
 }
