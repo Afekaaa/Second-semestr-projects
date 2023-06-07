@@ -38,7 +38,7 @@ public:
 	int size() const;
 
 	void setElem(const int key);
-	bool delElem(const int key);
+	bool remove(const int key);
 	bool contains(const int key);
 
 	void show();

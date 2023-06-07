@@ -84,7 +84,7 @@ void HashTable::setElem(const int key)
 	}
 }
 
-bool HashTable::delElem(const int key)
+bool HashTable::remove(const int key)
 {
 	if (!contains(key))
 		return false;
@@ -201,8 +201,12 @@ int main()
 	int* mas = new int[lenMas];
 
 	for (int i = 0; i < lenMas; ++i)
+	{
 		mas[i] = rand() % 100;
+		std::cout << mas[i] << " ";
+	}
 
+	std::cout << std::endl;
 	HashTable T(mas, lenMas);
 
 }
