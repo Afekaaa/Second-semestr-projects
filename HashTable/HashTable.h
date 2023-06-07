@@ -32,8 +32,8 @@ public:
 	HashTable(HashTable& otherHashTable);
 	~HashTable();
 
-	int hash(const int hashBefore, const int i) const;
-	int hash0(int key) const;
+	int hash(const int key) const;
+	int hash0(const int key) const;
 
 	int size() const;
 

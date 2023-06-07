@@ -49,17 +49,17 @@ HashTable::~HashTable()
 	delete m_hashTable;
 }
 
-int HashTable::hash0(int key) const
+int HashTable::hash0(const int key) const
 {
 	if (key < 0)
 		return m_size - std::abs(key) % m_size;
 	return key % m_size;
 }
 
-int HashTable::hash(const int hashBefore, const int i) const
+int HashTable::hash(const int key) const
 {
 	const float a = (std::sqrt(5) - 1) / 2;
-	int hash = int((hashBefore * m_size) * a) % m_size;
+	int hash = int((hash0(key) * m_size) * a) % m_size;
 
 	return hash;
 }
@@ -71,13 +71,13 @@ int HashTable::size() const
 
 void HashTable::setElem(const int key)
 {
-	int hash = hash0(key);
+	int hash1 = hash(key);
 
-	if (m_hashTable[hash]->isEmpty())
-		m_hashTable[hash]->setKey(key);
+	if (m_hashTable[hash1]->isEmpty())
+		m_hashTable[hash1]->setKey(key);
 	else
 	{
-		BlockOfChain* runner = m_hashTable[hash];
+		BlockOfChain* runner = m_hashTable[hash1];
 		while (runner = runner->next());
 
 		runner = new BlockOfChain(key);
@@ -89,24 +89,24 @@ bool HashTable::delElem(const int key)
 	if (!contains(key))
 		return false;
 
-	int hash = hash0(key);
+	int hash1 = hash(key);
 
-	if (!m_hashTable[hash]->isEmpty())
+	if (!m_hashTable[hash1]->isEmpty())
 	{
-		BlockOfChain* runner = m_hashTable[hash];
+		BlockOfChain* runner = m_hashTable[hash1];
 
 		if (runner->key() == key)
 		{
 			BlockOfChain* tmpPointer = runner->next();
 			delete runner;
-			m_hashTable[hash] = tmpPointer;
+			m_hashTable[hash1] = tmpPointer;
 
 			return true;
 		}
 
 		else if ((runner = runner->next())->key() == key)
 		{	
-			m_hashTable[hash] = runner->next();
+			m_hashTable[hash1] = runner->next();
 			delete runner;
 
 			return true;
@@ -115,7 +115,7 @@ bool HashTable::delElem(const int key)
 		else 
 		{
 			runner = runner->next();
-			BlockOfChain* secondRunner = m_hashTable[hash];
+			BlockOfChain* secondRunner = m_hashTable[hash1];
 
 			while (runner)
 			{
@@ -138,11 +138,11 @@ bool HashTable::delElem(const int key)
 
 bool HashTable::contains(const int key)
 {
-	int hash = hash0(key);
+	int hash1 = hash(key);
 
-	if (!m_hashTable[hash]->isEmpty())
+	if (!m_hashTable[hash1]->isEmpty())
 	{
-		BlockOfChain* runner = m_hashTable[hash];
+		BlockOfChain* runner = m_hashTable[hash1];
 
 		while (runner)
 		{
@@ -186,10 +186,10 @@ HashTable& HashTable::operator = (HashTable otherHashTable)
 	return *this;
 }
 
-HashTable::BlockOfChain*& HashTable::operator [] (const int hash)
+HashTable::BlockOfChain*& HashTable::operator [] (const int key)
 {
-	if (hash >= 0 and hash < m_size)
-		return m_hashTable[hash];
+	if (key >= 0 and key < m_size)
+		return m_hashTable[key];
 }
 
 #include <random>
