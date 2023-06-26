@@ -1,7 +1,6 @@
-#include "Node.h"
-#include <vector>
-
 #pragma once
+
+#include <vector>
 
 
 class BinaryTree
@@ -47,13 +46,16 @@ public:
 	int getMaxKey() const;
 	int getMinKey() const;
 
+	Node* addNode(int key);
 	Node* addNode(Node* root, const int key);
-	bool deleteNode(const int key);
+
+	bool remove(const int key);
+
 	void clear(Node* root);
 	void clearAllTree();
 
 	std::vector<int> getAllKeys(const Node * root, std::vector<int> binaryTreeValues) const;
-	void printTree() const;
+	void printTree(Node* root, int marginLeft, int levelSpacing) const;
 
 	BinaryTree& operator= (const BinaryTree& other);
 
@@ -63,5 +65,9 @@ private:
 	int getMinKey(const Node* root, const int key) const;
 	int getMaxKey(const Node* root, const int key) const;
 
+	void remove(Node* root, int key);
+	void deleteRoot(Node* parentRoot, Node* node);
+	void deleteMRoot();
+	void setAnyLeafParent(Node*& leafParent, Node*& leaf);
 };
 
