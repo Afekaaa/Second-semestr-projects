@@ -6,6 +6,7 @@ int SearchTree::getMaxKey() const
 {
 	return getMaxKey(m_root);
 }
+
 int SearchTree::getMaxKey(const Node* root) const
 {
 	if (!root)
@@ -14,9 +15,9 @@ int SearchTree::getMaxKey(const Node* root) const
 		return NULL;
 	}
 
-	Node* runner;
+	const Node* runner = root;
 
-	while (!(runner = root->getRightChild())) {}
+	while (!(runner = runner->getRightChild())) {}
 
 	return runner->getKey();
 }
@@ -77,7 +78,7 @@ BinaryTree::Node* SearchTree::findNode(Node* root, const int key) const
 	return root;
 }
 
-SearchTree& SearchTree::operator= (const SearchTree& other)
+/*SearchTree& SearchTree::operator= (const SearchTree& other)
 {
 	if (m_root != other.getRoot())
 	{
@@ -86,6 +87,104 @@ SearchTree& SearchTree::operator= (const SearchTree& other)
 	}
 
 	return *this;
+}*/
+
+bool SearchTree::remove(const int key)
+{
+	Node* rootToBeDeleted;
+	if (!(rootToBeDeleted = findNode(m_root, key)))
+		return false;
+
+	Node* rootParent = getParent(rootToBeDeleted);
+
+	if (rootToBeDeleted->getAmountChildren() == 0)
+	{
+		if (rootParent)
+		{
+			if (rootParent->getLeftChild() == rootToBeDeleted)
+				rootParent->setLeftChild(nullptr);
+			else if (rootParent->getRightChild() == rootToBeDeleted)
+				rootParent->setRightChild(nullptr);
+		}
+
+		delete rootToBeDeleted;
+	}
+	else if (rootToBeDeleted->getAmountChildren() == 1)
+	{
+		Node* replacementRoot = nullptr;
+
+		if (rootToBeDeleted->getLeftChild())
+			replacementRoot = rootToBeDeleted->getLeftChild();
+		else
+			replacementRoot = rootToBeDeleted->getRightChild();
+
+		if (rootParent)
+		{
+			if (rootParent->getLeftChild() == rootToBeDeleted)
+				rootParent->setLeftChild(nullptr);
+			else if (rootParent->getRightChild() == rootToBeDeleted)
+				rootParent->setRightChild(nullptr);
+		}
+
+		delete rootToBeDeleted;
+	}
+	else
+	{
+		//1. Find replacementRoot
+		//2. Find parentReplacementRoot
+		//
+
+		Node* replacementRoot = getReplacementRoot(rootToBeDeleted);
+		Node* parentReplacementRoot = getParent(replacementRoot);
+
+		if (parentReplacementRoot == rootToBeDeleted)
+		{
+			replacementRoot->setLeftChild(rootToBeDeleted->getLeftChild());
+		}
+		else
+		{
+			parentReplacementRoot->setLeftChild(replacementRoot->getRightChild());
+			replacementRoot->setLeftChild(rootToBeDeleted->getLeftChild());
+			replacementRoot->setRightChild(rootToBeDeleted->getRightChild());
+		}
+
+		if (rootParent)
+		{
+			if (rootParent->getLeftChild() == rootToBeDeleted)
+				rootParent->setLeftChild(nullptr);
+			else if (rootParent->getRightChild() == rootToBeDeleted)
+				rootParent->setRightChild(nullptr);
+		}
+
+		delete rootToBeDeleted;
+	}
+}
+BinaryTree::Node* SearchTree::getParent(Node* root) const
+{
+	Node* parentRoot = m_root;
+
+	if (root == parentRoot) return nullptr;
+
+	while (true)
+	{
+		if (root->getKey() < parentRoot->getKey())
+			if (parentRoot->getLeftChild() == root)
+				break;
+			else
+				parentRoot = parentRoot->getLeftChild();
+		else
+			if (parentRoot->getRightChild() == root)
+				break;
+			else
+				parentRoot = parentRoot->getRightChild();
+	}
+}
+BinaryTree::Node* SearchTree::getReplacementRoot(Node* root) const
+{
+	Node* runner = root->getRightChild();
+	while (runner->getLeftChild()) runner = runner->getLeftChild();
+
+	return runner;
 }
 
 int main()

@@ -17,13 +17,13 @@ public:
 
     Node* findNode(Node* root, const int key) const;
 
-    Node* addNode(const int key);
+    Node* addNode(const int key) override;
     Node* addNode(Node* root, const int key) override;
-    bool deleteNode(const int key) override { return false; };
+    bool remove(const int key) override;
 
-    SearchTree& operator= (const SearchTree& other)/* = default*/;
+    //SearchTree& operator= (const SearchTree& other)/* = default*/;
 
 private:
-
+    Node* getParent(Node* root) const;
 };
 
