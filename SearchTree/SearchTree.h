@@ -8,8 +8,7 @@ class SearchTree :
 {
 public:
     SearchTree() = default;
-    SearchTree(const SearchTree& other);
-    ~SearchTree();
+    ~SearchTree() = default;
 
     int getMaxKey() const override;
     int getMaxKey(const Node* root) const override;
@@ -25,7 +24,6 @@ public:
     SearchTree& operator= (const SearchTree& other)/* = default*/;
 
 private:
-    Node* m_root = nullptr;
 
 };
 

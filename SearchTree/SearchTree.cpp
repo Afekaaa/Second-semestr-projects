@@ -1,14 +1,6 @@
 ﻿#include "SearchTree.h"
 #include <iostream>
 
-SearchTree::SearchTree(const SearchTree& other)
-{
-	m_root = new Node(*other.getRoot());
-}
-SearchTree::~SearchTree()
-{
-	clear(m_root);
-}
 
 int SearchTree::getMaxKey() const
 {
@@ -37,7 +29,7 @@ int SearchTree::getMinKey(const Node* root) const
 {
 	if (!root)
 	{
-		throw std::invalid_argument("передан nullptr в функцию поиска минимума дерева"); // Понять, где его ловить и нужно ли.
+		throw std::invalid_argument("передан nullptr в функцию поиска минимума дерева"); 
 		return NULL;
 	}
 
