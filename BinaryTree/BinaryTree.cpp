@@ -24,6 +24,11 @@ BinaryTree::Node* BinaryTree::getRoot() const
 	return m_root;
 }
 
+int BinaryTree::getHeight() const
+{
+	return getHeight(m_root);
+}
+
 int BinaryTree::getHeight(const Node * root) const
 {
 	int rightHeight = 0;
@@ -44,6 +49,10 @@ int BinaryTree::getHeight(const Node * root) const
 	}
 
 	return maxHeight;
+}
+int BinaryTree::getAmountNode() const
+{
+	return getAmountNode(m_root);
 }
 int BinaryTree::getAmountNode(const Node * root) const
 {
@@ -302,6 +311,11 @@ void BinaryTree::setAnyLeafParent(Node*& leafParent, Node*& leaf)
 	}
 }
 
+void BinaryTree::clear()
+{
+	clear(m_root);
+}
+
 void BinaryTree::clear(Node* root)
 {
 	if (!root)
@@ -320,7 +334,12 @@ void BinaryTree::clear(Node* root)
 	delete root;
 }
 
-std::vector<int> BinaryTree::getAllKeys(const Node * root = nullptr, std::vector<int> binaryTreeValues = {}) const
+std::vector<int> BinaryTree::getAllKeys() const
+{
+	return getAllKeys(m_root);
+}
+
+std::vector<int> BinaryTree::getAllKeys(const Node * root, std::vector<int> binaryTreeValues) const
 {
 	if (root)
 	{
@@ -332,6 +351,11 @@ std::vector<int> BinaryTree::getAllKeys(const Node * root = nullptr, std::vector
 	return binaryTreeValues;
 }
 
+void BinaryTree::printTree()
+{
+	printTree(5, 3);
+}
+
 void BinaryTree::printTree(Node* root, int marginLeft, int levelSpacing) const
 {
 
@@ -340,9 +364,7 @@ void BinaryTree::printTree(Node* root, int marginLeft, int levelSpacing) const
 	
 
 	printTree(root->getRightChild(), marginLeft + levelSpacing, levelSpacing);
-
 	std::cout << std::string(marginLeft, ' ') << root->getKey() << std::endl;
-
 	printTree(root->getLeftChild(), marginLeft + levelSpacing, levelSpacing);
 	
 }

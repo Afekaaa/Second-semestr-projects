@@ -17,7 +17,9 @@ public:
 	bool keyInTree(const int key) const;
 
 	Node* getRoot() const;
+	int getHeight() const;
 	int getHeight(const Node * root) const;
+	int getAmountNode() const;
 	int getAmountNode(const Node * root) const;
 
 	virtual int getMaxKey() const;
@@ -31,12 +33,14 @@ public:
 
 	virtual bool remove(const int key);
 
+	void clear();
 	void clear(Node* root);
 	void clearAllTree();
 
-	std::vector<int> getAllKeys(const Node * root, std::vector<int> binaryTreeValues) const;
+	std::vector<int> getAllKeys() const;
+	std::vector<int> getAllKeys(const Node * root, std::vector<int> binaryTreeValues = {}) const;
 
-	
+	void printTree();
 	void printTree(Node* root, int marginLeft, int levelSpacing) const;
 	void printTree(int marginLeft, int levelSpacing) const;
 
