@@ -18,9 +18,18 @@
     <ClCompile Include="SearchTree.cpp">
       <Filter>Исходные файлы</Filter>
     </ClCompile>
+    <ClCompile Include="..\BinaryTree\BinaryTree.cpp">
+      <Filter>Исходные файлы</Filter>
+    </ClCompile>
+    <ClCompile Include="..\BinaryTree\Node.cpp">
+      <Filter>Исходные файлы</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="SearchTree.h">
+      <Filter>Файлы заголовков</Filter>
+    </ClInclude>
+    <ClInclude Include="..\BinaryTree\BinaryTree.h">
       <Filter>Файлы заголовков</Filter>
     </ClInclude>
   </ItemGroup>

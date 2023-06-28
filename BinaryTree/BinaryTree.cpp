@@ -1,6 +1,5 @@
 ﻿#include "BinaryTree.h"
-#include <iostream>
-#include <random>
+
 
 BinaryTree::BinaryTree(const BinaryTree& other)
 {
@@ -65,7 +64,7 @@ int BinaryTree::getMinKey(const Node* root) const
 {
 	if (!root)
 	{
-		std::cerr << "Tree is empty" << std::endl;
+		throw std::invalid_argument("передан nullptr в функцию поиска минимума дерева, либо поддерева.");
 		exit(0);
 	}
 
@@ -87,7 +86,7 @@ int BinaryTree::getMaxKey(const Node* root) const
 {
 	if (!root)
 	{
-		std::cerr << "Tree is empty" << std::endl;
+		throw std::invalid_argument("передан nullptr в функцию поиска максимума дерева, либо поддерева.");
 		exit(0);
 	}
 
@@ -129,21 +128,40 @@ bool BinaryTree::keyInTree(const int key) const
 
 BinaryTree::Node* BinaryTree::addNode(int key)
 {
-	addNode(m_root, key);
+	if (isEmpty())
+		return m_root = new Node(key);
+
+	return addNode(m_root, key);
 }
 
 BinaryTree::Node* BinaryTree::addNode(Node* root, const int key)
 {
-	srand(time_t(0));
+	srand(time(0));
 
-	if (!root)
-		root = new Node(key);
-	else if (rand() % 2)
-		root->setLeftChild(addNode(root->getLeftChild(), key));
-	else
-		root->setRightChild(addNode(root->getRightChild(), key));
-	
-	return root;
+	while (true)
+	{
+		if (rand() % 2)
+		{
+			if (root->getRightChild() == nullptr)
+			{
+				root->setRightChild(new Node(key));
+				return root->getRightChild();
+			}
+			else
+				root = root->getRightChild();
+		}
+		else
+		{
+			if (root->getLeftChild() == nullptr)
+			{
+				root->setLeftChild(new Node(key));
+				return root->getLeftChild();
+			}
+
+			else
+				root = root->getLeftChild();
+		}
+	}
 }
 
 bool BinaryTree::remove(const int key)
@@ -292,13 +310,11 @@ void BinaryTree::clear(Node* root)
 	if (root->getRightChild())
 	{
 		clear(root->getRightChild());
-		delete root->getRightChild();
 	}
 
 	if (root->getLeftChild())
 	{
 		clear(root->getLeftChild());
-		delete root->getLeftChild();
 	}
 
 	delete root;
@@ -331,6 +347,11 @@ void BinaryTree::printTree(Node* root, int marginLeft, int levelSpacing) const
 	
 }
 
+void BinaryTree::printTree(int marginLeft, int levelSpacing) const
+{
+	printTree(m_root, marginLeft, levelSpacing);
+}
+
 BinaryTree& BinaryTree::operator= (const BinaryTree& other)
 {
 	if (m_root != other.getRoot())
@@ -346,22 +367,4 @@ void BinaryTree::clearAllTree()
 {
 	clear(m_root);
 	m_root = nullptr;
-}
-
-
-int main()
-{
-	srand(time(0));
-
-	const int amountNode = 10;
-	int* masNode = new int[amountNode];
-
-	BinaryTree tree;
-
-	for (int i = 0; i < amountNode; ++i)
-	{
-		tree.addNode(rand() % 100);
-	}
-
-
 }

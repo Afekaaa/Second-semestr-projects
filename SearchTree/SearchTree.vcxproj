@@ -139,9 +139,12 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="..\BinaryTree\BinaryTree.cpp" />
+    <ClCompile Include="..\BinaryTree\Node.cpp" />
     <ClCompile Include="SearchTree.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="..\BinaryTree\BinaryTree.h" />
     <ClInclude Include="SearchTree.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
