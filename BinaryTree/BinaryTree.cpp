@@ -348,6 +348,7 @@ void BinaryTree::clearAllTree()
 	m_root = nullptr;
 }
 
+
 int main()
 {
 	srand(time(0));

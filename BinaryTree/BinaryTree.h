@@ -40,16 +40,16 @@ public:
 	Node* getRoot() const;
 	int getHeight(const Node * root) const;
 	int getAmountNode(const Node * root) const;
-	int getMinKey(const Node* root) const;
-	int getMaxKey(const Node* root) const;
+	virtual int getMinKey(const Node* root) const;
+	virtual int getMaxKey(const Node* root) const;
 
-	int getMaxKey() const;
-	int getMinKey() const;
+	virtual int getMaxKey() const;
+	virtual int getMinKey() const;
 
-	Node* addNode(int key);
-	Node* addNode(Node* root, const int key);
+	virtual Node* addNode(int key);
+	virtual  Node* addNode(Node* root, const int key);
 
-	bool remove(const int key);
+	virtual bool remove(const int key);
 
 	void clear(Node* root);
 	void clearAllTree();
@@ -58,10 +58,10 @@ public:
 	void printTree(Node* root, int marginLeft, int levelSpacing) const;
 
 	BinaryTree& operator= (const BinaryTree& other);
-
+protected:
+	Node* m_root = nullptr;
 
 private:
-	Node* m_root = nullptr;
 	int getMinKey(const Node* root, const int key) const;
 	int getMaxKey(const Node* root, const int key) const;
 
