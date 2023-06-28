@@ -2,13 +2,15 @@
 
 HashTable::BlockOfChain::BlockOfChain()
 {
+	m_value = 0;
 	m_key = 0;
 	m_next = nullptr;
 	m_empty = true;
 }
 
-HashTable::BlockOfChain::BlockOfChain(const int key)
+HashTable::BlockOfChain::BlockOfChain(const int value, const int key)
 {
+	m_value = value;
 	m_key = key;
 	m_empty = false;
 	m_next = nullptr;
@@ -18,6 +20,7 @@ HashTable::BlockOfChain::BlockOfChain(BlockOfChain& otherString)
 {
 	if (!otherString.isEmpty())
 	{
+		m_value = otherString.value();
 		m_key = otherString.key();
 		m_empty = false;
 	}
@@ -65,17 +68,30 @@ void HashTable::BlockOfChain::setEmpty(const bool empty)
 	m_empty = empty;
 }
 
+int HashTable::BlockOfChain::value() const
+{
+	if (!isEmpty())
+		return m_value;
+	else
+		throw std::runtime_error("Попытка получить значение value из пустой хеш-таблицы.");
+}
+
 int HashTable::BlockOfChain::key() const
 {
 	if (!isEmpty())
 		return m_key;
 	else
-		throw std::runtime_error("text");
+		throw std::runtime_error("Попытка получить значение key из пустой хеш-таблицы.");
 }
 
 HashTable::BlockOfChain* HashTable::BlockOfChain::next()
 {
 	return m_next;
+}
+
+void HashTable::BlockOfChain::setValue(const int value)
+{
+	m_value = value;
 }
 
 void HashTable::BlockOfChain::setKey(const int key)

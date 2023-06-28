@@ -11,20 +11,13 @@ HashTable::HashTable()
 	}
 }
 
-HashTable::HashTable(const int* mas, const int size)
+HashTable::HashTable(const int * values, const int* keys, const int size)
 {
-	m_size = size + 10;
+	m_size = size + size * 0,1;
 	m_hashTable = new BlockOfChain*[m_size];
 	
-	for (int i = 0; i < size; ++i)
-	{
-		m_hashTable[i] = new BlockOfChain(mas[i]);
-	}
-
-	for (int i = size; i < m_size; ++i)
-	{
-		m_hashTable[i] = new BlockOfChain;
-	}
+	for (int i = 0; i < m_size; ++i)
+		m_hashTable[i] = new BlockOfChain(values[i], keys[i]);
 }
 
 HashTable::HashTable(HashTable& otherHashTable)
@@ -42,9 +35,7 @@ HashTable::HashTable(HashTable& otherHashTable)
 HashTable::~HashTable()
 {
 	for (int i = 0; i < m_size; ++i)
-	{
 		delete m_hashTable[i];
-	}
 
 	delete m_hashTable;
 }
@@ -69,24 +60,27 @@ int HashTable::size() const
 	return m_size;
 }
 
-void HashTable::setElem(const int key)
+void HashTable::setElem(const int value, const int key)
 {
 	int hash1 = hash(key);
 
 	if (m_hashTable[hash1]->isEmpty())
+	{
+		m_hashTable[hash1]->setValue(value);
 		m_hashTable[hash1]->setKey(key);
+	}
 	else
 	{
 		BlockOfChain* runner = m_hashTable[hash1];
 		while (runner = runner->next());
 
-		runner = new BlockOfChain(key);
+		runner = new BlockOfChain(value, key);
 	}
 }
 
-bool HashTable::remove(const int key)
+bool HashTable::remove(const int value, const int key)
 {
-	if (!contains(key))
+	if (!contains(value, key))
 		return false;
 
 	int hash1 = hash(key);
@@ -95,7 +89,7 @@ bool HashTable::remove(const int key)
 	{
 		BlockOfChain* runner = m_hashTable[hash1];
 
-		if (runner->key() == key)
+		if (runner->value() == value)
 		{
 			BlockOfChain* tmpPointer = runner->next();
 			delete runner;
@@ -104,7 +98,7 @@ bool HashTable::remove(const int key)
 			return true;
 		}
 
-		else if ((runner = runner->next())->key() == key)
+		else if ((runner = runner->next())->value() == value)
 		{	
 			m_hashTable[hash1] = runner->next();
 			delete runner;
@@ -136,7 +130,7 @@ bool HashTable::remove(const int key)
 	return false;
 }
 
-bool HashTable::contains(const int key)
+bool HashTable::contains(const int value, const int key)
 {
 	int hash1 = hash(key);
 
@@ -146,7 +140,7 @@ bool HashTable::contains(const int key)
 
 		while (runner)
 		{
-			if (runner->key() == key and !runner->isEmpty())
+			if (runner->value() == value and !runner->isEmpty())
 				return true;
 			runner = runner->next();
 		}
@@ -156,23 +150,22 @@ bool HashTable::contains(const int key)
 
 void HashTable::show()
 {
-	std::cout << "Hash\t" << "Key\t" << "Next\t" << std::endl;
+	std::cout << "Hash\t" << "Value\t" << "Key\t" << "Next\t" << std::endl;
 
 	for (int i = 0; i < m_size; i++)
 	{
 		if (m_hashTable[i]->isEmpty())
-			std::cout << i << "\t" << "empty\t empty\t" << std::endl;
+			std::cout << i << "\t" << "empty\t empty\t empty\t" << std::endl;
 		else
 		{
-			std::cout << i << "\t" << m_hashTable[i]->key() << "\t";
+			std::cout << i << "\t" << m_hashTable[i]->value() << "\t" << m_hashTable[i]->key() << "\t";
 			BlockOfChain* runner = m_hashTable[i]->next();
 
 			while (runner)
-				std::cout << runner->key() << "\t";
+				std::cout << runner->value() << runner->key() << "\t";
 
 			std::cout << std::endl;
 		}
-
 	}
 }
 
@@ -210,6 +203,6 @@ int main()
 	}
 
 	std::cout << std::endl;
-	HashTable T(mas, lenMas);
+	HashTable T(mas, mas, lenMas);
 
 }
