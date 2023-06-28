@@ -85,45 +85,32 @@ bool HashTable::remove(const int value, const int key)
 
 	int hash1 = hash(key);
 
-	if (!m_hashTable[hash1]->isEmpty())
+	BlockOfChain* runner = m_hashTable[hash1];
+
+	if (runner->value() == value)
 	{
-		BlockOfChain* runner = m_hashTable[hash1];
+		m_hashTable[hash1] = runner->next();
+		delete runner;
 
-		if (runner->value() == value)
+		return true;
+	}
+	else 
+	{
+		BlockOfChain* secondRunner = runner;
+		runner = runner->next();
+
+		while (true)
 		{
-			BlockOfChain* tmpPointer = runner->next();
-			delete runner;
-			m_hashTable[hash1] = tmpPointer;
-
-			return true;
-		}
-
-		else if ((runner = runner->next())->value() == value)
-		{	
-			m_hashTable[hash1] = runner->next();
-			delete runner;
-
-			return true;
-		}
-
-		else 
-		{
-			runner = runner->next();
-			BlockOfChain* secondRunner = m_hashTable[hash1];
-
-			while (runner)
+			if (runner->key() == key)
 			{
-				if (runner->key() == key)
-				{
-					secondRunner->setNext(runner->next());
-					delete runner;
+				secondRunner->setNext(runner->next());
+				delete runner;
 
-					return true;
-				}
-
-				runner = runner->next();
-				secondRunner = secondRunner->next();
+				return true;
 			}
+
+			runner = runner->next();
+			secondRunner = secondRunner->next();
 		}
 	}
 
