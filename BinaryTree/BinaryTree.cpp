@@ -368,23 +368,3 @@ void BinaryTree::clearAllTree()
 	clear(m_root);
 	m_root = nullptr;
 }
-
-
-int main()
-{
-	srand(time(0));
-
-	const int amountNode = 10;
-	int* masNode = new int[amountNode];
-
-	BinaryTree tree;
-
-	for (int i = 0; i < amountNode; ++i)
-	{
-		tree.addNode(rand() % 100);
-	}
-
-	tree.printTree(2, 3);
-
-	return 0;
-}

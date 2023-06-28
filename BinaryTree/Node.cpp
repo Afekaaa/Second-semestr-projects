@@ -8,7 +8,7 @@ BinaryTree::Node::Node()
 BinaryTree::Node::Node(const Node& other)
 {
 	m_key = other.getKey();
-	
+
 	if (other.getRightChild())
 		m_rightChild = new Node(*other.getRightChild());
 	if (other.getLeftChild())
@@ -53,12 +53,12 @@ BinaryTree::Node* BinaryTree::Node::getLeftChild() const
 	return m_leftChild;
 }
 
-void BinaryTree::Node::setRightChild(Node * rightChild)
+void BinaryTree::Node::setRightChild(Node* rightChild)
 {
 	m_rightChild = rightChild;
 }
 
-void BinaryTree::Node::setLeftChild(Node * leftChild)
+void BinaryTree::Node::setLeftChild(Node* leftChild)
 {
 	m_leftChild = leftChild;
 }

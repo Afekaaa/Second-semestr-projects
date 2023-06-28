@@ -7,27 +7,7 @@
 class BinaryTree
 {
 public:
-	class Node
-	{
-	public:
-		Node();
-		Node(const Node& other);
-		Node(const int key);
-		~Node() = default;
-
-		int getKey() const;
-		void setKey(const int key);
-		Node* getRightChild() const;
-		Node* getLeftChild() const;
-		int getAmountChildren() const;
-
-		void setRightChild(Node * rightChild);
-		void setLeftChild(Node * leftChild);
-	private:
-		int m_key = 0;
-		Node* m_rightChild = nullptr;
-		Node* m_leftChild = nullptr;
-	};
+	class Node;
 
 	BinaryTree() = default;
 	BinaryTree(const BinaryTree& other);
@@ -74,3 +54,24 @@ private:
 	void setAnyLeafParent(Node*& leafParent, Node*& leaf);
 };
 
+class BinaryTree::Node
+{
+public:
+	Node();
+	Node(const Node& other);
+	Node(const int key);
+	~Node() = default;
+
+	int getKey() const;
+	void setKey(const int key);
+	Node* getRightChild() const;
+	Node* getLeftChild() const;
+	int getAmountChildren() const;
+
+	void setRightChild(Node* rightChild);
+	void setLeftChild(Node* leftChild);
+private:
+	int m_key = 0;
+	Node* m_rightChild = nullptr;
+	Node* m_leftChild = nullptr;
+};
