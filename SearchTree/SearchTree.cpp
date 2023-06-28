@@ -1,5 +1,4 @@
 ﻿#include "SearchTree.h"
-#include <iostream>
 
 
 int SearchTree::getMaxKey() const
@@ -11,13 +10,16 @@ int SearchTree::getMaxKey(const Node* root) const
 {
 	if (!root)
 	{
-		throw std::invalid_argument("передан nullptr в функцию поиска максимума дерева"); // Понять, где его ловить и нужно ли.
+		throw std::invalid_argument("передан nullptr в функцию поиска максимума дерева, либо поддерева.");
 		return NULL;
 	}
 
 	const Node* runner = root;
 
-	while (!(runner = runner->getRightChild())) {}
+	while (runner->getRightChild())
+	{
+		runner = runner->getRightChild();
+	}
 
 	return runner->getKey();
 }
@@ -106,8 +108,12 @@ bool SearchTree::remove(const int key)
 			else if (rootParent->getRightChild() == rootToBeDeleted)
 				rootParent->setRightChild(nullptr);
 		}
+		else
+			m_root = nullptr;
 
 		delete rootToBeDeleted;
+
+		return true;
 	}
 	else if (rootToBeDeleted->getAmountChildren() == 1)
 	{
@@ -121,19 +127,19 @@ bool SearchTree::remove(const int key)
 		if (rootParent)
 		{
 			if (rootParent->getLeftChild() == rootToBeDeleted)
-				rootParent->setLeftChild(nullptr);
+				rootParent->setLeftChild(replacementRoot);
 			else if (rootParent->getRightChild() == rootToBeDeleted)
-				rootParent->setRightChild(nullptr);
+				rootParent->setRightChild(replacementRoot);
 		}
+		else
+			m_root = replacementRoot;
 
 		delete rootToBeDeleted;
+
+		return true;
 	}
 	else
 	{
-		//1. Find replacementRoot
-		//2. Find parentReplacementRoot
-		//
-
 		Node* replacementRoot = getReplacementRoot(rootToBeDeleted);
 		Node* parentReplacementRoot = getParent(replacementRoot);
 
@@ -151,19 +157,26 @@ bool SearchTree::remove(const int key)
 		if (rootParent)
 		{
 			if (rootParent->getLeftChild() == rootToBeDeleted)
-				rootParent->setLeftChild(nullptr);
+				rootParent->setLeftChild(replacementRoot);
 			else if (rootParent->getRightChild() == rootToBeDeleted)
-				rootParent->setRightChild(nullptr);
+				rootParent->setRightChild(replacementRoot);
+		}
+		else
+		{
+			m_root = replacementRoot;
 		}
 
 		delete rootToBeDeleted;
+
+		return true;
 	}
 }
 BinaryTree::Node* SearchTree::getParent(Node* root) const
 {
-	Node* parentRoot = m_root;
+	if (root == m_root) 
+		return nullptr;
 
-	if (root == parentRoot) return nullptr;
+	Node* parentRoot = m_root;
 
 	while (true)
 	{
@@ -192,10 +205,7 @@ int main()
 	SearchTree tree;
 	tree.addNode(10);
 
-	SearchTree newTree;
-	newTree = tree;
-
-	std::cout << newTree.getRoot();
+//	tree.printTree(2, 3);
 
 	return 0;
 }
