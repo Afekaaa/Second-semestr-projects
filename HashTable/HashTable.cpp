@@ -184,7 +184,7 @@ HashTable& HashTable::operator = (HashTable otherHashTable)
 	m_size = otherHashTable.size();
 	delete[] m_hashTable;
 
-	//HashTable(otherHashTable);
+	HashTable(otherHashTable);
 
 	return *this;
 }
