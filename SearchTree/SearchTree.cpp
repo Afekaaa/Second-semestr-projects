@@ -45,6 +45,8 @@ int SearchTree::getMinKey(const Node* root) const
 
 BinaryTree::Node* SearchTree::addNode(const int key)
 {
+	if (isEmpty())
+		return m_root = new Node(key);
 	return addNode(m_root, key);
 }
 BinaryTree::Node* SearchTree::addNode(Node* root, const int key)
@@ -202,10 +204,18 @@ BinaryTree::Node* SearchTree::getReplacementRoot(Node* root) const
 
 int main()
 {
-	SearchTree tree;
-	tree.addNode(10);
+	srand(time(0));
 
-//	tree.printTree(2, 3);
+	const int amountNode = 10;
+
+	SearchTree tree;
+
+	for (int i = 0; i < amountNode; ++i)
+	{
+		tree.addNode(rand() % 100);
+	}
+
+	tree.printTree(5, 3);
 
 	return 0;
 }
