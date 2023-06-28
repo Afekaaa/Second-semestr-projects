@@ -1,6 +1,9 @@
 #pragma once
 
 #include <iostream>
+
+
+
 class HashTable
 {
 public:
@@ -31,6 +34,8 @@ public:
 	HashTable(const int* mas, const int size);
 	HashTable(HashTable& otherHashTable);
 	~HashTable();
+
+	
 
 	int hash(const int key) const;
 	int hash0(const int key) const;

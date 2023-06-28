@@ -178,8 +178,11 @@ void HashTable::show()
 
 HashTable& HashTable::operator = (HashTable otherHashTable)
 {
+	if (otherHashTable.m_hashTable == m_hashTable)
+		return *this;
+
 	m_size = otherHashTable.size();
-	delete [] m_hashTable;
+	delete[] m_hashTable;
 
 	//HashTable(otherHashTable);
 
