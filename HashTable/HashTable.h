@@ -41,7 +41,7 @@ public:
 
 	int size() const;
 
-	void setElem(const int value, const int key);
+	void addElem(const int value, const int key);
 	bool remove(const int value, const int key);
 	bool contains(const int value, const int key);
 

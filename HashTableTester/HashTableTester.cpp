@@ -1,20 +1,84 @@
-﻿// HashTableTester.cpp : Этот файл содержит функцию "main". Здесь начинается и заканчивается выполнение программы.
-//
+﻿#include "HashTableTester.h"
 
-#include <iostream>
 
-int main()
+HashTableTester::HashTableTester(const bool useConsoleOutput)
 {
-    std::cout << "Hello World!\n";
+    m_useConsoleOutput = useConsoleOutput;
+	m_maxSize = 0;
 }
 
-// Запуск программы: CTRL+F5 или меню "Отладка" > "Запуск без отладки"
-// Отладка программы: F5 или меню "Отладка" > "Запустить отладку"
+void HashTableTester::test(const int size)
+{
+	if (size == 0)
+		return;
 
-// Советы по началу работы 
-//   1. В окне обозревателя решений можно добавлять файлы и управлять ими.
-//   2. В окне Team Explorer можно подключиться к системе управления версиями.
-//   3. В окне "Выходные данные" можно просматривать выходные данные сборки и другие сообщения.
-//   4. В окне "Список ошибок" можно просматривать ошибки.
-//   5. Последовательно выберите пункты меню "Проект" > "Добавить новый элемент", чтобы создать файлы кода, или "Проект" > "Добавить существующий элемент", чтобы добавить в проект существующие файлы кода.
-//   6. Чтобы снова открыть этот проект позже, выберите пункты меню "Файл" > "Открыть" > "Проект" и выберите SLN-файл.
+    m_maxSize = size;
+
+	constructor();
+	addElemAndContains();
+	remove();
+	assign();
+	squareBracketOperator();
+}
+
+void HashTableTester::addElemAndContains()
+{
+	HashTable table;
+	std::vector<int> values;
+	std::vector<int> anotherValues;
+	std::vector<int> keys;
+
+	//умножаю на два, чтобы были внешние цепочки и вычитаю единицу, чтобы они точно были не у всех строк
+	for (int i = 0; i < m_maxSize * 2 - 1; ++i)
+	{
+		table.addElem(i, i);
+		values.push_back(i);
+		anotherValues.push_back(-i);
+		keys.push_back(i);
+
+		checkPresenceOfElements(table, i, i);
+		checkAbsenceOfElements(table, -i, i);
+	}
+	
+	auto iterAnotherValues = anotherValues.begin();
+	auto iterValues = values.begin();
+	auto iterKeys = keys.begin();
+
+	//замещаем старые значения - новыми.
+	for (; iterAnotherValues != anotherValues.end(); ++iterAnotherValues, ++iterValues, ++iterKeys)
+	{
+		table.addElem(*iterAnotherValues, *iterKeys);
+
+		checkPresenceOfElements(table, *iterAnotherValues, *iterKeys);
+		checkAbsenceOfElements(table, *iterValues, *iterKeys);
+	}
+}
+
+void HashTableTester::checkPresenceOfElements(HashTable table, const int value, const int key) const
+{
+	assert(table.contains(value, key));
+}
+
+void checkAbsenceOfElements(HashTable table, const int value, const int key)
+{
+	assert(!table.contains(value, key));
+}
+
+void HashTableTester::constructors()
+{
+	srand(time(0));
+	const int masLen = m_maxSize * 2 - 1;
+	int* masValues = new int[masLen];
+	int* masKeys = new int[masLen];
+
+	for (int i = 0; i < masLen; ++i)
+	{
+		masValues[i] = rand() % 20;
+		masKeys[i] = i;
+	}
+
+	HashTable table(masValues, masKeys, masLen);
+
+	for (int i = 0; i < masLen; ++i)
+		checkPresenceOfElements(table, masValues[i], masKeys[i]);
+}

@@ -1,5 +1,4 @@
-﻿#include <iostream>
-#include "HashTable.h"
+﻿#include "HashTable.h"
 
 HashTable::HashTable()
 {
@@ -60,7 +59,7 @@ int HashTable::size() const
 	return m_size;
 }
 
-void HashTable::setElem(const int value, const int key)
+void HashTable::addElem(const int value, const int key)
 {
 	int hash1 = hash(key);
 
@@ -72,7 +71,15 @@ void HashTable::setElem(const int value, const int key)
 	else
 	{
 		BlockOfChain* runner = m_hashTable[hash1];
-		while (runner = runner->next());
+		while (runner = runner->next())
+		{
+			if (runner->key() == key)
+			{
+				runner->setValue(value);
+				return;
+			}
+				
+		}
 
 		runner = new BlockOfChain(value, key);
 	}
