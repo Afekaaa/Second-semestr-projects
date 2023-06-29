@@ -6,7 +6,7 @@ HuffmanTree::~HuffmanTree()
 	clear();
 }
 
-std::string HuffmanTree::build(std::string textBeforEncryption)
+void HuffmanTree::build(std::string textBeforEncryption)
 {
 	std::list<Node*> nodes;
 	createSortedNodes(nodes, textBeforEncryption);
@@ -15,29 +15,28 @@ std::string HuffmanTree::build(std::string textBeforEncryption)
 		clear();
 
 	m_root = nodes.front();
-	std::list<SymbolCode> symbolsCode;
-
-	encodeSymbols(symbolsCode);
-	std::string textAfterEncryption = getEncryptionText(symbolsCode, textBeforEncryption);
-
-	return textAfterEncryption;
+	encodeSymbols();
 }
 
-int HuffmanTree::encode(std::string textBeforEncryption, std::string* textAfterEncryption) const
+float HuffmanTree::encode(std::string textBeforEncryption, std::string* textAfterEncryption)
 {
-	return textAfterEncryption->size() / (textBeforEncryption.size() * 8) * 100;
-}
+	if (!m_root)
+		build(textBeforEncryption);
 
-bool HuffmanTree::decode(std::string textAfterEncryption, std::string* textBeforEncryption) 
-{
-	std::string newTextAfterEncryption = build(*textBeforEncryption);
-
-	if (textAfterEncryption == newTextAfterEncryption)
+	bool successfulEncoding = createEncryptionText(*textAfterEncryption, textBeforEncryption);
+	if (successfulEncoding)
 	{
-		return true;
+		float a = textAfterEncryption->size();
+		float b = textBeforEncryption.size() * 8;
+		return a / b * 100;
 	}
+	else
+		return -1;
+}
 
-	return false;
+bool HuffmanTree::decode(std::string textAfterEncryption, std::string* textAfterDecoding) 
+{
+	return createTextAfterDecoding(*textAfterDecoding, textAfterEncryption);
 }
 
 void HuffmanTree::createSortedNodes(std::list<Node*>& nodes, std::string textBeforeEncryption) const
@@ -92,30 +91,34 @@ HuffmanTree::Node* HuffmanTree::getJoinedTwoNodes(Node* firstNode, Node* secondN
 	return newNode;
 }
 
-void HuffmanTree::encodeSymbols(std::list<SymbolCode>& symbolsCode) const 
+void HuffmanTree::encodeSymbols() const 
 {
-
-	for (int i = 0; m_root->getSymbols()[i]; i++)
+	if (m_root->getSymbols().length() == 1)
 	{
-		std::string symbolCode;
-
-		auto treeIter = m_root;
-		char symbol = m_root->getSymbols()[i];
-
-		while (treeIter->getLeftChild() or treeIter->getRightChild())
+		m_root->getCode() = "0";
+	}
+	else {
+		for (int i = 0; m_root->getSymbols()[i]; i++)
 		{
-			if (symbolInSymbols(treeIter->getLeftChild()->getSymbols(), symbol)) {
-				treeIter = treeIter->getLeftChild();
-				symbolCode += "0";
-			}
-			else
-			{
-				treeIter = treeIter->getRightChild();
-				symbolCode += "1";
-			}
-		}
+			auto treeIter = m_root;
+			char symbol = m_root->getSymbols()[i];
+			std::string codeSymbol;
 
-		symbolsCode.push_back({ symbol, symbolCode });
+			while (treeIter->getLeftChild() or treeIter->getRightChild())
+			{
+				if (symbolInSymbols(treeIter->getLeftChild()->getSymbols(), symbol)) {
+					treeIter = treeIter->getLeftChild();
+					codeSymbol += "0";
+				}
+				else
+				{
+					treeIter = treeIter->getRightChild();
+					codeSymbol += "1";
+				}
+			}
+
+			treeIter->getCode() = codeSymbol;
+		}
 	}
 }
 
@@ -132,16 +135,17 @@ void HuffmanTree::setNewNodeToList(std::list<Node*>& nodes, Node* newNode) const
 		nodes.push_back(newNode);
 }
 
-std::string HuffmanTree::getEncryptionText(std::list<SymbolCode> symbolsCode, std::string textBeforEncryption)
+bool HuffmanTree::createEncryptionText(std::string& textAfterEncryption, std::string textBeforEncryption)
 {
-	std::string textAfterEncryption;
 
 	for (int i = 0; textBeforEncryption[i]; i++)
-	{	
-		textAfterEncryption += getCode(symbolsCode, textBeforEncryption[i]);
+	{
+		std::string codeOfNextSymbol = getCode(textBeforEncryption[i]);
+		if (codeOfNextSymbol == "-1") return false;
+		else textAfterEncryption += codeOfNextSymbol;
 	}
 
-	return textAfterEncryption;
+	return true;
 }
 
 bool HuffmanTree::symbolInSymbols(std::string symbols, char symbol) const
@@ -155,13 +159,46 @@ bool HuffmanTree::symbolInSymbols(std::string symbols, char symbol) const
 	return false;
 }
 
-std::string HuffmanTree::getCode(std::list<SymbolCode> symbolsCode, const char symbol) const
+std::string HuffmanTree::getCode(const char symbol) const
 {
-	for (auto iter : symbolsCode)
+	auto treeIter = m_root;
+
+	while (treeIter->getRightChild())
 	{
-		if (iter.symbol == symbol)
-			return iter.code;
+		if (symbolInSymbols(treeIter->getLeftChild()->getSymbols(), symbol))
+			treeIter = treeIter->getLeftChild();
+		else if (symbolInSymbols(treeIter->getRightChild()->getSymbols(), symbol))
+			treeIter = treeIter->getRightChild();
+		else
+			return "-1";
 	}
+
+	return treeIter->getCode();
+}
+
+bool HuffmanTree::createTextAfterDecoding(std::string& textAfterDecoding, std::string textAfterEncryption)
+{
+	auto treeIter = m_root;
+
+	for (int i = 0; textAfterEncryption[i]; ++i)
+	{
+		if (textAfterEncryption[i] == '0' and treeIter->getLeftChild())
+			treeIter = treeIter->getLeftChild();
+		else if (treeIter->getRightChild())
+			treeIter = treeIter->getRightChild();
+
+		if (treeIter->getSymbols().length() == 1)
+		{
+			textAfterDecoding += treeIter->getSymbols();
+			treeIter = m_root;
+		}
+		
+	}
+
+	if (treeIter == m_root)
+		return true;
+	else
+		return false;
 }
 
 void HuffmanTree::clear()
@@ -183,10 +220,17 @@ void HuffmanTree::clear(Node* root)
 int main()
 {
 	std::string textBeforEncode = "There was a green grasshopper in the grass\0";
-	//std::cout << textBeforEncode.size();
+	std::cout << textBeforEncode << std::endl;
 
 	HuffmanTree encodeText;
-	std::cout << encodeText.build(textBeforEncode) << std::endl;
+	std::string textAfterEncryption;
+
+	encodeText.build(textBeforEncode);
+	std::cout << encodeText.encode(textBeforEncode, &textAfterEncryption) << std::endl;
+	std::cout << textAfterEncryption << std::endl;
+	std::string textAfterDecoding;
+	std:: cout << encodeText.decode(textAfterEncryption, &textAfterDecoding) << std::endl;
+	std::cout << textAfterDecoding;
 
 	return 0;
 }
