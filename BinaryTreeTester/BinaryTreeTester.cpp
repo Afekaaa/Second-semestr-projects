@@ -84,10 +84,16 @@ void BinaryTreeTester::remove()
         nodeKeys.erase(nodeKeys.begin() + removedNodeIndex);
         check_remove(tree, nodeKeys.size());
         if (m_useConsoleOutput)
+        {
             tree->printTree();
+            std::cout << "______________________________________________________________________" << std::endl;
+        }
     }
     if (m_useConsoleOutput)
+    {
         tree->printTree();
+        std::cout << "______________________________________________________________________" << std::endl;
+    }
     tree->remove(invalidKey);
     check_remove(tree, nodeKeys.size());
     deallocateTree(tree);
@@ -101,9 +107,11 @@ void BinaryTreeTester::check_remove(const BinaryTree* tree, const int size)
 void BinaryTreeTester::clear()
 {
     BinaryTree* tree = allocateTree();
+
     for (int i = 0; i < 200; i++)
     {
-        for (int i = 0; i < m_maxSize; ++i) {
+        for (int i = 0; i < m_maxSize; ++i) 
+        {
             tree->addNode(i);
         }
         tree->clear();
@@ -126,7 +134,12 @@ void BinaryTreeTester::check_assign(std::vector<BinaryTree::Node*> tree1Nodes, s
 
     for (; treeIter1 != tree1Nodes.end() and treeIter2 != tree2Nodes.end(); ++treeIter1, ++treeIter2)
     {
-
+        if ((*treeIter1) or (*treeIter2))
+        {
+            assert(!((*treeIter1) == nullptr and (*treeIter2) != nullptr) or ((*treeIter1) != nullptr and (*treeIter2) == nullptr));
+            assert((*treeIter1) != (*treeIter2));
+            assert((*treeIter1)->getKey() == (*treeIter2)->getKey());
+        }
     }
 }
 
@@ -144,24 +157,24 @@ void BinaryTreeTester::assign()
     std::vector<BinaryTree::Node*> tree1Nodes = treeNodes(&tree1);
     std::vector<BinaryTree::Node*> tree2Nodes = treeNodes(&tree2);
 
-    //FixMe: доделать проверку
+    check_assign(tree1Nodes, tree2Nodes);
 
     tree1 = tree2; //Присваивание
 
     tree1Nodes = treeNodes(&tree1);
     tree2Nodes = treeNodes(&tree2);
 
-    //FixMe: доделать проверку
+    check_assign(tree1Nodes, tree2Nodes);
 }
 
 std::vector<BinaryTree::Node*> BinaryTreeTester::treeNodes(const BinaryTree* tree)
 {
-    std::vector<const BinaryTree::Node*> nodes;
+    std::vector<BinaryTree::Node*> nodes;
 
-    std::queue<const BinaryTree::Node*> nodesToProcess;
+    std::queue<BinaryTree::Node*> nodesToProcess;
     nodesToProcess.push(tree->getRoot());
     while (!nodesToProcess.empty()) {
-        const BinaryTree::Node* node = nodesToProcess.front();
+        BinaryTree::Node* node = nodesToProcess.front();
         if (node != nullptr) {
             nodesToProcess.push(node->getLeftChild());
             nodesToProcess.push(node->getRightChild());
@@ -274,4 +287,12 @@ void BinaryTreeTester::height_longRandomZigzagSubtrees()
         }
         check_height(longTree, i + 1);
     }
+}
+
+int main()
+{
+    const int maxSize = 5;
+    BinaryTreeTester BTTester = BinaryTreeTester(true);
+    BTTester.test(maxSize);
+    return 0;
 }
