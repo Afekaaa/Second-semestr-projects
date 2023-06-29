@@ -3,11 +3,6 @@
 #include <iostream>
 #include <list>
 
-struct SymbolCode
-{
-	char symbol;
-	std::string code;
-};
 
 class HuffmanTree
 {
@@ -26,15 +21,15 @@ public:
 		Node* getLeftChild() const;
 		Node* getRightChild() const;
 
+		std::string& getCode();
+
 		void setFrequency(const int frequency);
 		void setLeftChild(const Node* leftChild);
 		void setRightChild(const Node* rightCild);
 
-		Node* operator + (const Node otherNode);
-		Node* operator ++ ();
-
 	private:
 		std::string m_symbols;
+		std::string m_code;
 		int m_frequency = 1;
 		Node* m_leftChild = nullptr;
 		Node* m_rightChild = nullptr;
@@ -43,8 +38,8 @@ public:
 	HuffmanTree() = default;
 	~HuffmanTree();
 
-	std::string build(std::string textBeforEncryption);
-	int encode(std::string textBeforEncryption, std::string* textAfterEncryption) const;
+	void build(std::string textBeforEncryption);
+	int encode(std::string textBeforEncryption, std::string* textAfterEncryption);
 	bool decode(std::string textAfterEncryption, std::string* textBeforEncryption);
 
 private:
@@ -54,10 +49,11 @@ private:
 	Node* getJoinedTwoNodes(Node* firstNode, Node* secondNode) const;
 	void setNewNodeToList(std::list<Node*>& nodes, Node* newNode) const;
 	bool symbolInSymbols(std::string symbols, char symbol) const;
-	std::string getCode(std::list<SymbolCode> symbolsCode, const char symbol) const;
-	void encodeSymbols(std::list<SymbolCode>& symbolsCode) const;
+	std::string getCode(const char symbol) const;
+	void encodeSymbols() const;
 
-	std::string getEncryptionText(std::list<SymbolCode> symbolsCode, std::string textBeforEncryption);
+	bool createEncryptionText(std::string& textAfterEncryption, std::string textBeforEncryption);
+	bool createTextAfterDecoding(std::string& textAfterDecoding, std::string textAfterEncryption);
 
 	void clear();
 	void clear(Node* root);

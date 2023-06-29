@@ -36,6 +36,11 @@ HuffmanTree::Node* HuffmanTree::Node::getRightChild()const
     return m_rightChild;
 }
 
+std::string& HuffmanTree::Node::getCode()
+{
+    return m_code;
+}
+
 void HuffmanTree::Node::setFrequency(const int frequency)
 {
     m_frequency = frequency;
