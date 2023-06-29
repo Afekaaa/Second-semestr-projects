@@ -93,26 +93,32 @@ HuffmanTree::Node* HuffmanTree::getJoinedTwoNodes(Node* firstNode, Node* secondN
 
 void HuffmanTree::encodeSymbols() const 
 {
-	for (int i = 0; m_root->getSymbols()[i]; i++)
+	if (m_root->getSymbols().length() == 1)
 	{
-		auto treeIter = m_root;
-		char symbol = m_root->getSymbols()[i];
-		std::string codeSymbol;
-
-		while (treeIter->getLeftChild() or treeIter->getRightChild())
+		m_root->getCode() = "0";
+	}
+	else {
+		for (int i = 0; m_root->getSymbols()[i]; i++)
 		{
-			if (symbolInSymbols(treeIter->getLeftChild()->getSymbols(), symbol)) {
-				treeIter = treeIter->getLeftChild();
-				codeSymbol += "0";
-			}
-			else
-			{
-				treeIter = treeIter->getRightChild();
-				codeSymbol += "1";
-			}
-		}
+			auto treeIter = m_root;
+			char symbol = m_root->getSymbols()[i];
+			std::string codeSymbol;
 
-		treeIter->getCode() = codeSymbol;
+			while (treeIter->getLeftChild() or treeIter->getRightChild())
+			{
+				if (symbolInSymbols(treeIter->getLeftChild()->getSymbols(), symbol)) {
+					treeIter = treeIter->getLeftChild();
+					codeSymbol += "0";
+				}
+				else
+				{
+					treeIter = treeIter->getRightChild();
+					codeSymbol += "1";
+				}
+			}
+
+			treeIter->getCode() = codeSymbol;
+		}
 	}
 }
 
@@ -176,9 +182,9 @@ bool HuffmanTree::createTextAfterDecoding(std::string& textAfterDecoding, std::s
 
 	for (int i = 0; textAfterEncryption[i]; ++i)
 	{
-		if (textAfterEncryption[i] == '0')
+		if (textAfterEncryption[i] == '0' and treeIter->getLeftChild())
 			treeIter = treeIter->getLeftChild();
-		else
+		else if (treeIter->getRightChild())
 			treeIter = treeIter->getRightChild();
 
 		if (treeIter->getSymbols().length() == 1)
@@ -186,6 +192,7 @@ bool HuffmanTree::createTextAfterDecoding(std::string& textAfterDecoding, std::s
 			textAfterDecoding += treeIter->getSymbols();
 			treeIter = m_root;
 		}
+		
 	}
 
 	if (treeIter == m_root)
@@ -212,7 +219,7 @@ void HuffmanTree::clear(Node* root)
 
 int main()
 {
-	std::string textBeforEncode = "uuuuuuuuuuuuuuuuuuuiiiiiiiiiiiiiiiiiiiiii";
+	std::string textBeforEncode = "There was a green grasshopper in the grass\0";
 	std::cout << textBeforEncode << std::endl;
 
 	HuffmanTree encodeText;
