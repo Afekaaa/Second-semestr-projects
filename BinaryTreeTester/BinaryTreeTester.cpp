@@ -87,7 +87,7 @@ void BinaryTreeTester::remove()
             tree->printTree();
     }
     if (m_useConsoleOutput)
-        tree->print();
+        tree->printTree();
     tree->remove(invalidKey);
     check_remove(tree, nodeKeys.size());
     deallocateTree(tree);
@@ -119,9 +119,21 @@ void BinaryTreeTester::check_clear(const BinaryTree* tree, const int size)
     assert(tree->getAmountNode() == size);
 }
 
+void BinaryTreeTester::check_assign(std::vector<BinaryTree::Node*> tree1Nodes, std::vector<BinaryTree::Node*> tree2Nodes)
+{
+    auto treeIter1 = tree1Nodes.begin();
+    auto treeIter2 = tree2Nodes.begin();
+
+    for (; treeIter1 != tree1Nodes.end() and treeIter2 != tree2Nodes.end(); ++treeIter1, ++treeIter2)
+    {
+
+    }
+}
+
 void BinaryTreeTester::assign()
 {
     BinaryTree tree1;
+    int size = m_maxSize;
 
     for (int i = 0; i < size; ++i) {
         tree1.addNode(i);
@@ -129,20 +141,20 @@ void BinaryTreeTester::assign()
 
     BinaryTree tree2 = tree1; //Конструктор копирования
 
-    std::vector<BinaryTree::Node*> tree1Nodes = tree1.getAllKeys();
-    std::vector<BinaryTree::Node*> tree2Nodes = treeNodes(tree2);
+    std::vector<BinaryTree::Node*> tree1Nodes = treeNodes(&tree1);
+    std::vector<BinaryTree::Node*> tree2Nodes = treeNodes(&tree2);
 
     //FixMe: доделать проверку
 
     tree1 = tree2; //Присваивание
 
-    tree1Nodes = treeNodes(tree1);
-    tree2Nodes = treeNodes(tree2);
+    tree1Nodes = treeNodes(&tree1);
+    tree2Nodes = treeNodes(&tree2);
 
     //FixMe: доделать проверку
 }
 
-std::vector<const BinaryTree::Node*> BinaryTreeTester::treeNodes(const BinaryTree* tree)
+std::vector<BinaryTree::Node*> BinaryTreeTester::treeNodes(const BinaryTree* tree)
 {
     std::vector<const BinaryTree::Node*> nodes;
 
