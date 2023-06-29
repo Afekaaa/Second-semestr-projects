@@ -22,6 +22,7 @@ public:
 
     bool remove(const int key) override;
 
+    Node* findNode(const int key) const;
     Node* findNode(Node* root, const int key) const;
 
     //SearchTree& operator= (const SearchTree& other)/* = default*/;

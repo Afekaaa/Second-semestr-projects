@@ -67,8 +67,18 @@ BinaryTree::Node* SearchTree::addNode(Node* root, const int key)
 	return root;
 }
 
+BinaryTree::Node * SearchTree::findNode(const int key) const
+{
+	if (isEmpty())
+		return nullptr;
+
+	return findNode(m_root, key);
+}
+
 BinaryTree::Node* SearchTree::findNode(Node* root, const int key) const
 {
+	if (!root)
+		return nullptr;
 
 	if (key < root->getKey())
 	{
@@ -96,7 +106,7 @@ BinaryTree::Node* SearchTree::findNode(Node* root, const int key) const
 bool SearchTree::remove(const int key)
 {
 	Node* rootToBeDeleted;
-	if (!(rootToBeDeleted = findNode(m_root, key)))
+	if (!(rootToBeDeleted = findNode(key)))
 		return false;
 
 	Node* rootParent = getParent(rootToBeDeleted);
@@ -184,12 +194,12 @@ BinaryTree::Node* SearchTree::getParent(Node* root) const
 	{
 		if (root->getKey() < parentRoot->getKey())
 			if (parentRoot->getLeftChild() == root)
-				break;
+				return parentRoot;
 			else
 				parentRoot = parentRoot->getLeftChild();
 		else
 			if (parentRoot->getRightChild() == root)
-				break;
+				return parentRoot;
 			else
 				parentRoot = parentRoot->getRightChild();
 	}
@@ -202,20 +212,20 @@ BinaryTree::Node* SearchTree::getReplacementRoot(Node* root) const
 	return runner;
 }
 
-int main()
-{
-	srand(time(0));
-
-	const int amountNode = 10;
-
-	SearchTree tree;
-
-	for (int i = 0; i < amountNode; ++i)
-	{
-		tree.addNode(rand() % 100);
-	}
-
-	tree.printTree(5, 3);
-
-	return 0;
-}
+//int main()
+//{
+//	srand(time(0));
+//
+//	const int amountNode = 10;
+//
+//	SearchTree tree;
+//
+//	for (int i = 0; i < amountNode; ++i)
+//	{
+//		tree.addNode(rand() % 100);
+//	}
+//
+//	tree.printTree(5, 3);
+//
+//	return 0;
+//}

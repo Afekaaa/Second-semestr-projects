@@ -3,6 +3,8 @@
 BinaryTree::Node::Node()
 {
 	m_key = 0;
+	m_rightChild = nullptr;
+	m_leftChild = nullptr;
 }
 
 BinaryTree::Node::Node(const Node& other)
@@ -11,13 +13,19 @@ BinaryTree::Node::Node(const Node& other)
 
 	if (other.getRightChild())
 		m_rightChild = new Node(*other.getRightChild());
+	else
+		m_rightChild = nullptr;
 	if (other.getLeftChild())
 		m_leftChild = new Node(*other.getLeftChild());
+	else
+		m_leftChild = nullptr;
 }
 
 BinaryTree::Node::Node(const int key)
 {
 	m_key = key;
+	m_rightChild = nullptr;
+	m_leftChild = nullptr;
 }
 
 int BinaryTree::Node::getKey() const
@@ -54,7 +62,7 @@ BinaryTree::Node* BinaryTree::Node::getLeftChild() const
 }
 
 void BinaryTree::Node::setRightChild(Node* rightChild)
-{
+{		
 	m_rightChild = rightChild;
 }
 
