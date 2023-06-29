@@ -1,4 +1,4 @@
-﻿#include "BinaryTree.h" 
+#include "BinaryTree.h"  
 
 
 BinaryTree::BinaryTree(const BinaryTree& other)
@@ -211,20 +211,31 @@ void BinaryTree::deleteMRoot()
 		delete m_root;
 		m_root = nullptr;
 	}
-	else
+	else 
 	{
 		Node* leafParent = m_root;
 		Node* leaf = nullptr;
 
 		setAnyLeafParent(leafParent, leaf);
 
-		if (leafParent->getRightChild())
-			leafParent->setRightChild(nullptr);
-		else if (leafParent->getLeftChild())
-			leafParent->setLeftChild(nullptr);
+		if (leafParent == m_root)
+		{
+			m_root = leaf;
+			delete leafParent;
+		}
+		else
+		{
+			if (leafParent->getRightChild())
+				leafParent->setRightChild(nullptr);
+			else if (leafParent->getLeftChild())
+				leafParent->setLeftChild(nullptr);
 
-		delete m_root;
-		m_root = leaf;
+			leaf->setLeftChild(m_root->getLeftChild());
+			leaf->setRightChild(m_root->getRightChild());
+
+			delete m_root;
+			m_root = leaf;
+		}
 	}
 }
 
@@ -314,6 +325,7 @@ void BinaryTree::setAnyLeafParent(Node*& leafParent, Node*& leaf)
 void BinaryTree::clear()
 {
 	clear(m_root);
+	m_root = nullptr;
 }
 
 void BinaryTree::clear(Node* root)

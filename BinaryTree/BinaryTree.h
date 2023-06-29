@@ -1,8 +1,8 @@
-#pragma once
+#pragma once 
 
-#include <vector>
-#include <iostream>
-#include <random>
+#include <vector> 
+#include <iostream> 
+#include <random> 
 
 class BinaryTree
 {
@@ -18,9 +18,9 @@ public:
 
 	Node* getRoot() const;
 	int getHeight() const;
-	int getHeight(const Node * root) const;
+	int getHeight(const Node* root) const;
 	int getAmountNode() const;
-	int getAmountNode(const Node * root) const;
+	int getAmountNode(const Node* root) const;
 
 	virtual int getMaxKey() const;
 	virtual int getMinKey() const;
@@ -38,7 +38,7 @@ public:
 	void clearAllTree();
 
 	std::vector<int> getAllKeys() const;
-	std::vector<int> getAllKeys(const Node * root, std::vector<int> binaryTreeValues = {}) const;
+	std::vector<int> getAllKeys(const Node* root, std::vector<int> binaryTreeValues = {}) const;
 
 	void printTree();
 	void printTree(Node* root, int marginLeft, int levelSpacing) const;
