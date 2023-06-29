@@ -26,7 +26,7 @@ private:
     void addAndCount();
     void destructor();
     void remove();
-    void clear(); //ToDo: реализовать
+    void clear(); 
     void assign();
     void height();
     void height_trivialCases();

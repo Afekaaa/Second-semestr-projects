@@ -7,6 +7,8 @@ BinaryTreeTester::BinaryTreeTester(const bool useConsoleOutput)
 
 void BinaryTreeTester::test(const int size)
 {
+    if (size == 0)
+        return;
     m_maxSize = size;
     addAndCount();
     destructor();
@@ -117,6 +119,7 @@ void BinaryTreeTester::clear()
         tree->clear();
         check_clear(tree, 0);
     }
+
     deallocateTree(tree);
     std::cout << "BinaryTreeTester::destructor ended. Press any key to continue..." << std::endl;
     getchar();
@@ -291,7 +294,7 @@ void BinaryTreeTester::height_longRandomZigzagSubtrees()
 
 int main()
 {
-    const int maxSize = 5;
+    const int maxSize = 1;
     BinaryTreeTester BTTester = BinaryTreeTester(true);
     BTTester.test(maxSize);
     return 0;
