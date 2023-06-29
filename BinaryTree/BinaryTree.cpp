@@ -60,8 +60,10 @@ int BinaryTree::getAmountNode(const Node* root) const
 
 	if (root)
 	{
-		counterNode += getAmountNode(root->getLeftChild());
-		counterNode += getAmountNode(root->getRightChild());
+		if (root->getLeftChild())
+			counterNode += getAmountNode(root->getLeftChild());
+		if (root->getRightChild())
+			counterNode += getAmountNode(root->getRightChild());
 
 		counterNode++;
 	}
