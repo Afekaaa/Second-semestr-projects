@@ -23,6 +23,7 @@ public:
 
 		std::string& getCode();
 
+		void setSymbols(std::string symbols);
 		void setFrequency(const int frequency);
 		void setLeftChild(const Node* leftChild);
 		void setRightChild(const Node* rightCild);
@@ -39,7 +40,7 @@ public:
 	~HuffmanTree();
 
 	void build(std::string textBeforEncryption);
-	int encode(std::string textBeforEncryption, std::string* textAfterEncryption);
+	float encode(std::string textBeforEncryption, std::string* textAfterEncryption);
 	bool decode(std::string textAfterEncryption, std::string* textBeforEncryption);
 
 private:

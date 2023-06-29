@@ -15,16 +15,21 @@ void HuffmanTree::build(std::string textBeforEncryption)
 		clear();
 
 	m_root = nodes.front();
+	encodeSymbols();
 }
 
-int HuffmanTree::encode(std::string textBeforEncryption, std::string* textAfterEncryption)
+float HuffmanTree::encode(std::string textBeforEncryption, std::string* textAfterEncryption)
 {
 	if (!m_root)
 		build(textBeforEncryption);
 
 	bool successfulEncoding = createEncryptionText(*textAfterEncryption, textBeforEncryption);
 	if (successfulEncoding)
-		return textAfterEncryption->size() / (textBeforEncryption.size() * 8) * 100;
+	{
+		float a = textAfterEncryption->size();
+		float b = textBeforEncryption.size() * 8;
+		return a / b * 100;
+	}
 	else
 		return -1;
 }
@@ -92,19 +97,22 @@ void HuffmanTree::encodeSymbols() const
 	{
 		auto treeIter = m_root;
 		char symbol = m_root->getSymbols()[i];
+		std::string codeSymbol;
 
 		while (treeIter->getLeftChild() or treeIter->getRightChild())
 		{
 			if (symbolInSymbols(treeIter->getLeftChild()->getSymbols(), symbol)) {
 				treeIter = treeIter->getLeftChild();
-				treeIter->getCode() += "0";
+				codeSymbol += "0";
 			}
 			else
 			{
 				treeIter = treeIter->getRightChild();
-				treeIter->getCode() += "1";
+				codeSymbol += "1";
 			}
 		}
+
+		treeIter->getCode() = codeSymbol;
 	}
 }
 
@@ -204,11 +212,18 @@ void HuffmanTree::clear(Node* root)
 
 int main()
 {
-	std::string textBeforEncode = "There was a green grasshopper in the grass\0";
-	//std::cout << textBeforEncode.size();
+	std::string textBeforEncode = "uuuuuuuuuuuuuuuuuuuiiiiiiiiiiiiiiiiiiiiii";
+	std::cout << textBeforEncode << std::endl;
 
 	HuffmanTree encodeText;
-	std::cout << encodeText.build(textBeforEncode) << std::endl;
+	std::string textAfterEncryption;
+
+	encodeText.build(textBeforEncode);
+	std::cout << encodeText.encode(textBeforEncode, &textAfterEncryption) << std::endl;
+	std::cout << textAfterEncryption << std::endl;
+	std::string textAfterDecoding;
+	std:: cout << encodeText.decode(textAfterEncryption, &textAfterDecoding) << std::endl;
+	std::cout << textAfterDecoding;
 
 	return 0;
 }
