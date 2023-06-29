@@ -76,6 +76,12 @@ void BinaryTreeTester::remove()
         tree->addNode(i);
     }
 
+    if (m_useConsoleOutput)
+    {
+        tree->printTree();
+        std::cout << "______________________________________________________________________" << std::endl;
+    }
+
     while (!nodeKeys.empty()) {
         int removedNodeIndex = rand() % nodeKeys.size(); //3
 
@@ -180,8 +186,8 @@ std::vector<BinaryTree::Node*> BinaryTreeTester::treeNodes(const BinaryTree* tre
         BinaryTree::Node* node = nodesToProcess.front();
         if (node != nullptr) {
             nodesToProcess.push(node->getLeftChild());
-            nodesToProcess.push(node->getRightChild());
             nodes.push_back(node);
+            nodesToProcess.push(node->getRightChild());
         }
         nodesToProcess.pop();
     }
@@ -292,10 +298,10 @@ void BinaryTreeTester::height_longRandomZigzagSubtrees()
     }
 }
 
-int main()
-{
-    const int maxSize = 1;
-    BinaryTreeTester BTTester = BinaryTreeTester(true);
-    BTTester.test(maxSize);
-    return 0;
-}
+//int main()
+//{
+//    const int maxSize = 1;
+//    BinaryTreeTester BTTester = BinaryTreeTester(true);
+//    BTTester.test(maxSize);
+//    return 0;
+//}

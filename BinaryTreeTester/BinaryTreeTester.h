@@ -15,14 +15,15 @@ public:
 
 protected:
     virtual BinaryTree* allocateTree();
+    virtual void deallocateTree(BinaryTree* tree);
     virtual void check_addAndCount(const BinaryTree* tree, const int size);
     virtual void check_remove(const BinaryTree* tree, const int size);
     virtual void check_clear(const BinaryTree* tree, const int size);
     virtual void check_assign(std::vector<BinaryTree::Node*> tree1Nodes, std::vector<BinaryTree::Node*> tree2Nodes);
-    virtual void check_height(const BinaryTree& tree, const int size);
+    void check_height(const BinaryTree& tree, const int size);
 
 private:
-    void deallocateTree(BinaryTree* tree);
+
     void addAndCount();
     void destructor();
     void remove();

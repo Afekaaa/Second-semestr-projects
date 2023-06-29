@@ -1,20 +1,83 @@
-﻿// SearchTreeTester.cpp : Этот файл содержит функцию "main". Здесь начинается и заканчивается выполнение программы.
-//
+﻿#include "SearchTreeTester.h"
 
-#include <iostream>
+SearchTreeTester::SearchTreeTester(const bool useConsoleOutput)
+    : BinaryTreeTester(useConsoleOutput)
+{}
+
+BinaryTree* SearchTreeTester::allocateTree()
+{
+    return new SearchTree;
+}
+
+void SearchTreeTester::deallocateTree(BinaryTree* tree)
+{
+    delete tree;
+}
+
+void SearchTreeTester::check_addAndCount(const BinaryTree* tree, const int size)
+{
+    BinaryTreeTester::check_addAndCount(tree, size);
+    assert(isSearchTree(tree));
+}
+
+void SearchTreeTester::check_remove(const BinaryTree* tree, const int size)
+{
+    BinaryTreeTester::check_remove(tree, size);
+    assert(isSearchTree(tree));
+}
+
+void SearchTreeTester::check_clear(const BinaryTree* tree, const int size)
+{
+    BinaryTreeTester::check_clear(tree, size);
+    assert(isSearchTree(tree));
+}
+
+void SearchTreeTester::check_assign(std::vector<BinaryTree::Node*> tree1Nodes, std::vector<BinaryTree::Node*> tree2Nodes)
+{
+    BinaryTreeTester::check_assign(tree1Nodes, tree2Nodes);
+
+    auto firstTreeIter = ++tree1Nodes.begin();
+    auto secondTreeIter = tree1Nodes.begin();
+
+    for (; firstTreeIter != tree1Nodes.end(); ++firstTreeIter, ++secondTreeIter)
+    {
+        assert((*secondTreeIter)->getKey() < (*firstTreeIter)->getKey());
+    }
+
+}
 
 int main()
 {
-    std::cout << "Hello World!\n";
+    const int maxSize = 5;
+    SearchTreeTester STTester = SearchTreeTester(true);
+
+    STTester.test(5);
 }
 
-// Запуск программы: CTRL+F5 или меню "Отладка" > "Запуск без отладки"
-// Отладка программы: F5 или меню "Отладка" > "Запустить отладку"
+bool SearchTreeTester::isSearchTree(const BinaryTree* tree)
+{
+    std::vector<int> keys;
 
-// Советы по началу работы 
-//   1. В окне обозревателя решений можно добавлять файлы и управлять ими.
-//   2. В окне Team Explorer можно подключиться к системе управления версиями.
-//   3. В окне "Выходные данные" можно просматривать выходные данные сборки и другие сообщения.
-//   4. В окне "Список ошибок" можно просматривать ошибки.
-//   5. Последовательно выберите пункты меню "Проект" > "Добавить новый элемент", чтобы создать файлы кода, или "Проект" > "Добавить существующий элемент", чтобы добавить в проект существующие файлы кода.
-//   6. Чтобы снова открыть этот проект позже, выберите пункты меню "Файл" > "Открыть" > "Проект" и выберите SLN-файл.
+    getKeysLnr(keys, tree->getRoot());
+
+    for (int i = 1; i < keys.size(); i++)
+    {
+        if (keys[i] <= keys[i - 1])
+        {
+            return false;
+        }
+    }
+
+    return true;
+}
+
+void SearchTreeTester::getKeysLnr(std::vector<int>& keys, BinaryTree::Node* node)
+{
+    if (!node)
+        return;
+    if (node->getLeftChild())
+        getKeysLnr(keys, node->getLeftChild());
+    keys.push_back(node->getKey());
+    if (node->getRightChild())
+        getKeysLnr(keys, node->getRightChild());
+}

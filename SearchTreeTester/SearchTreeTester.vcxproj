@@ -139,7 +139,17 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="..\BinaryTreeTester\BinaryTreeTester.cpp" />
+    <ClCompile Include="..\BinaryTree\BinaryTree.cpp" />
+    <ClCompile Include="..\BinaryTree\Node.cpp" />
+    <ClCompile Include="..\SearchTree\SearchTree.cpp" />
     <ClCompile Include="SearchTreeTester.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\BinaryTreeTester\BinaryTreeTester.h" />
+    <ClInclude Include="..\BinaryTree\BinaryTree.h" />
+    <ClInclude Include="..\SearchTree\SearchTree.h" />
+    <ClInclude Include="SearchTreeTester.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
