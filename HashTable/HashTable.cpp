@@ -3,32 +3,33 @@
 HashTable::HashTable()
 {
 	m_size = 7;
-	m_hashTable = new BlockOfChain*[m_size];
+	m_hashTable = new Node*[m_size];
 	for (int i = 0; i < m_size; ++i)
 	{
-		m_hashTable[i] = new BlockOfChain();
+		m_hashTable[i] = new Node();
 	}
 }
+
+
 
 HashTable::HashTable(const int * values, const int* keys, const int size)
 {
 	m_size = size + size * 0,1;
-	m_hashTable = new BlockOfChain*[m_size];
+	m_hashTable = new Node*[m_size];
 	
 	for (int i = 0; i < m_size; ++i)
-		m_hashTable[i] = new BlockOfChain(values[i], keys[i]);
+	{
+		int hash1 = hash(keys[i]);
+		m_hashTable[hash1] = new Node(values[i], keys[i]);
+	}
 }
 
-HashTable::HashTable(HashTable& otherHashTable)
+HashTable::HashTable(HashTable& otherTable)
 {
-	m_size = otherHashTable.size();
-	m_hashTable = new BlockOfChain*[m_size];
-
+	m_size = otherTable.size();
+	m_hashTable = new Node*[m_size];
 	for (int i = 0; i < m_size; i++)
-	{
-		m_hashTable[i] = new BlockOfChain(*otherHashTable[i]);
-	}
-	
+		m_hashTable[i] = new Node(*(otherTable.m_hashTable[i]));
 }
 
 HashTable::~HashTable()
@@ -36,7 +37,7 @@ HashTable::~HashTable()
 	for (int i = 0; i < m_size; ++i)
 		delete m_hashTable[i];
 
-	delete m_hashTable;
+	delete[] m_hashTable;
 }
 
 int HashTable::hash0(const int key) const
@@ -70,18 +71,25 @@ void HashTable::addElem(const int value, const int key)
 	}
 	else
 	{
-		BlockOfChain* runner = m_hashTable[hash1];
-		while (runner = runner->next())
+		Node* runner = m_hashTable[hash1];
+
+		while (runner->next())
 		{
 			if (runner->key() == key)
 			{
 				runner->setValue(value);
 				return;
 			}
-				
+			runner = runner->next();
 		}
 
-		runner = new BlockOfChain(value, key);
+		if (runner->key() == key)
+		{
+			runner->setValue(value);
+			return;
+		}
+
+		runner->setNext(new Node(value, key));
 	}
 }
 
@@ -92,7 +100,7 @@ bool HashTable::remove(const int value, const int key)
 
 	int hash1 = hash(key);
 
-	BlockOfChain* runner = m_hashTable[hash1];
+	Node* runner = m_hashTable[hash1];
 
 	if (runner->value() == value)
 	{
@@ -103,7 +111,7 @@ bool HashTable::remove(const int value, const int key)
 	}
 	else 
 	{
-		BlockOfChain* secondRunner = runner;
+		Node* secondRunner = runner;
 		runner = runner->next();
 
 		while (true)
@@ -130,7 +138,7 @@ bool HashTable::contains(const int value, const int key)
 
 	if (!m_hashTable[hash1]->isEmpty())
 	{
-		BlockOfChain* runner = m_hashTable[hash1];
+		Node* runner = m_hashTable[hash1];
 
 		while (runner)
 		{
@@ -153,10 +161,10 @@ void HashTable::show()
 		else
 		{
 			std::cout << i << "\t" << m_hashTable[i]->value() << "\t" << m_hashTable[i]->key() << "\t";
-			BlockOfChain* runner = m_hashTable[i]->next();
+			Node* runner = m_hashTable[i]->next();
 
 			while (runner)
-				std::cout << runner->value() << runner->key() << "\t";
+				std::cout << runner->value() << " " << runner->key() << "\t";
 
 			std::cout << std::endl;
 		}
@@ -165,38 +173,36 @@ void HashTable::show()
 
 HashTable& HashTable::operator = (HashTable otherHashTable)
 {
-	if (otherHashTable.m_hashTable == m_hashTable)
-		return *this;
+	if (otherHashTable.m_hashTable != m_hashTable)
+	{
+		for (int i = 0; i < m_size; ++i)
+			delete m_hashTable[i];
+		delete[] m_hashTable;
 
-	m_size = otherHashTable.size();
-	delete[] m_hashTable;
+		m_size = otherHashTable.size();
 
-	HashTable(otherHashTable);
+		m_hashTable = new Node * [m_size];
+		for (int i = 0; i < m_size; i++)
+			m_hashTable[i] = new Node(*(otherHashTable.m_hashTable[i]));
+	}
 
 	return *this;
 }
 
-HashTable::BlockOfChain*& HashTable::operator [] (const int key)
+int& HashTable::operator [] (const int key)
 {
-	if (key >= 0 and key < m_size)
-		return m_hashTable[key];
-}
+	int hash1 = hash(key);
+	Node* runner = m_hashTable[hash1];
 
-#include <random>
-
-int main()
-{
-	srand(time(0));
-	const int lenMas = 10;
-	int* mas = new int[lenMas];
-
-	for (int i = 0; i < lenMas; ++i)
+	while (runner->next() and !runner->next()->isEmpty())
 	{
-		mas[i] = rand() % 100;
-		std::cout << mas[i] << " ";
+		if (runner->key() == key)
+			return runner->value();
+
+		runner = runner->next();
 	}
-
-	std::cout << std::endl;
-	HashTable T(mas, mas, lenMas);
-
 }
+
+
+
+

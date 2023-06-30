@@ -139,7 +139,13 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="..\HashTable\BlockOfChain.cpp" />
+    <ClCompile Include="..\HashTable\HashTable.cpp" />
     <ClCompile Include="HashTableTester.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\HashTable\HashTable.h" />
+    <ClInclude Include="HashTableTester.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

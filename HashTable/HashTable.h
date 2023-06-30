@@ -5,29 +5,29 @@
 class HashTable
 {
 public:
-	class BlockOfChain
+	class Node
 	{
 	public:
-		BlockOfChain();
-		BlockOfChain(const int value, const int key);
-		BlockOfChain(BlockOfChain& otherString);
-		~BlockOfChain();
+		Node();
+		Node(const int value, const int key);
+		Node(Node& otherString);
+		~Node();
 
 		bool isEmpty() const;
 		void setEmpty(const bool empty);
 
-		int value() const;
+		int& value();
 		int key() const;
-		BlockOfChain* next();
+		Node* next();
 
 		void setValue(const int value);
 		void setKey(const int key);
-		void setNext(const BlockOfChain* nextString);
+		void setNext(Node* nextString);
 
 	private:
 		int m_value = 0;
 		int m_key = 0;
-		BlockOfChain* m_next = nullptr;
+		Node* m_next = nullptr;
 		bool m_empty = true;
 	};
 
@@ -48,10 +48,11 @@ public:
 	void show();
 
 	HashTable & operator = (const HashTable otherHashTable);
-	BlockOfChain*& operator [] (const int hash);
+	int& operator [] (const int key);
 
 private:
-	BlockOfChain** m_hashTable = nullptr;
+	Node** m_hashTable = nullptr;
 	int m_size = 0;
 };
+
 

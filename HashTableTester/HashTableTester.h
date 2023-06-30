@@ -5,33 +5,28 @@
 #include <random>
 #include "..\HashTable\HashTable.h"
 
-struct Block
-{
-	int value;
-	int key;
-};
-
 class HashTableTester
 {
 public:
-	HashTableTester(const bool useConsoleOutput);
-
+	HashTableTester(bool useConsoleOutput);
+	~HashTableTester() = default;
 	void test(const int size);
 
 private:
-	bool m_useConsoleOutput;
-	int m_maxSize;
-
-	void constructors();
-	void addElemAndContains();
-	void remove();
-	void assign();
-	void squareBracketOperator();
+	int m_maxSize = 0;
+	bool m_useConsoleOutput = false;
+	
+	void constructor() const;
+	void destructor() const;
+	void addElemAndContains() const;
+	void remove() const;
+	void squareBracketOperator() const;
+	void assignAndCopy() const;
 
 	void checkPresenceOfElements(HashTable table, const int value, const int key) const;
-	void checkAbsenceOfElements(HashTable table, const int value, const int key);
-	void checkRemove() const;
-	void checkAssign() const;
-	void checkSquareBracketOperator() const;
+	void checkAbsenceOfElements(HashTable table, const int value, const int key) const;
+	void checkAssignEquality(HashTable table1, HashTable table2, std::vector<int> keys) const;
+	void checkAssignInequality(HashTable table1, HashTable table2, std::vector<int> keys) const;
+
 };
 
