@@ -23,37 +23,35 @@ HashTable::Node::Node(Node& otherString)
 		m_value = otherString.value();
 		m_key = otherString.key();
 		m_empty = false;
+		m_next = nullptr;
+	}
+	else
+	{
+		m_value = 0;
+		m_key = 0;
+		m_empty = true;
+		m_next = nullptr;
 	}
 
-	m_next = nullptr;
-
-	Node* otherRunner = &otherString;
+	Node* otherRunner = otherString.next();
 	Node* thisRunner = this;
 
-	while (otherRunner = otherRunner->next())
+	while (otherRunner)
 	{
-		thisRunner->setNext(new Node);
-		thisRunner->setKey(otherRunner->key());
-		thisRunner->setEmpty(false);
-		thisRunner = thisRunner->next();
-	}
-}
-
-HashTable::Node::~Node()
-{
-	if (m_next)
-	{
-		Node* firstPtr = m_next;
-		Node* secondPtr = firstPtr->next();
-
-		while (secondPtr)
+		if (otherRunner->isEmpty())
 		{
-			delete firstPtr;
-			firstPtr = secondPtr;
-			secondPtr = secondPtr->next();
+			thisRunner->setNext(new Node());
+			break;
 		}
+		else
+		{
+			int value = otherRunner->value();
+			int key = otherRunner->key();
 
-		delete firstPtr;
+			thisRunner->setNext(new Node(otherRunner->value(), otherRunner->key()));
+			thisRunner = thisRunner->next();
+			otherRunner = otherRunner->next();
+		}
 	}
 
 }
@@ -73,7 +71,7 @@ int& HashTable::Node::value()
 	if (!isEmpty())
 		return m_value;
 	else
-		throw std::runtime_error("ѕопытка получить значение value из пустой хеш-таблицы.");
+		throw std::range_error("ѕопытка получить значение value из пустого блока внешней цепочки");
 }
 
 int HashTable::Node::key() const
@@ -81,7 +79,7 @@ int HashTable::Node::key() const
 	if (!isEmpty())
 		return m_key;
 	else
-		throw std::runtime_error("ѕопытка получить значение key из пустой хеш-таблицы.");
+		throw std::range_error("ѕопытка получить значение key из пустого блока внешней цепочки");
 }
 
 HashTable::Node* HashTable::Node::next()

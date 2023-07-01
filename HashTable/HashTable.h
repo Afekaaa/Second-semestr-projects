@@ -11,7 +11,7 @@ public:
 		Node();
 		Node(const int value, const int key);
 		Node(Node& otherString);
-		~Node();
+		~Node() = default;
 
 		bool isEmpty() const;
 		void setEmpty(const bool empty);
@@ -32,7 +32,8 @@ public:
 	};
 
 	HashTable();
-	HashTable(const int * values, const int* keys, const int size);
+	HashTable(const int size);
+	HashTable(const int* values, const int* keys, const int lenMas, const int size);
 	HashTable(HashTable& otherHashTable);
 	~HashTable();
 

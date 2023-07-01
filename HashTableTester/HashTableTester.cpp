@@ -14,29 +14,28 @@ void HashTableTester::test(const int size)
 
     m_maxSize = size;
 
-	constructor();
-	addElemAndContains();
-	remove();
+	constructorAndContains();
+	addElem();
+	removeAndShow();
 	squareBracketOperator();
 	assignAndCopy();
 
-	std::cout << "Press any key to test destructor" << std::endl;
-	getchar();
+	//std::cout << "Press any key to test destructor" << std::endl;
+	//getchar();
 
 	destructor();
 }
 
-void HashTableTester::addElemAndContains() const
+void HashTableTester::addElem() const
 {
-	HashTable table;
+	HashTable* table = new HashTable(m_maxSize);
 	std::vector<int> values;
 	std::vector<int> anotherValues;
 	std::vector<int> keys;
 
-	//умножаю на два, чтобы были внешние цепочки и вычитаю единицу, чтобы они точно были не у всех строк
-	for (int i = 0; i < m_maxSize * 2 - 1; ++i)
+	for (int i = 1; i < m_maxSize * 2; ++i)
 	{
-		table.addElem(i, i);
+		table->addElem(i, i);
 		values.push_back(i);
 		anotherValues.push_back(-i);
 		keys.push_back(i);
@@ -52,39 +51,39 @@ void HashTableTester::addElemAndContains() const
 	//замещаем старые значения - новыми.
 	for (; iterAnotherValues != anotherValues.end(); ++iterAnotherValues, ++iterValues, ++iterKeys)
 	{
-		table.addElem(*iterAnotherValues, *iterKeys);
+		table->addElem(*iterAnotherValues, *iterKeys);
 
 		checkPresenceOfElements(table, *iterAnotherValues, *iterKeys);
 		checkAbsenceOfElements(table, *iterValues, *iterKeys);
 	}
 }
 
-void HashTableTester::checkPresenceOfElements(HashTable table, const int value, const int key) const
+void HashTableTester::checkPresenceOfElements(HashTable* table, const int value, const int key) const
 {
-	assert(table.contains(value, key));
+	assert(table->contains(value, key));
 }
 
-void HashTableTester::checkAbsenceOfElements(HashTable table, const int value, const int key) const
+void HashTableTester::checkAbsenceOfElements(HashTable* table, const int value, const int key) const
 {
-	assert(!table.contains(value, key));
+	assert(!table->contains(value, key));
 }
 
-void HashTableTester::constructor() const
+void HashTableTester::constructorAndContains() const
 {
 	srand(time(0));
-	const int masLen = m_maxSize * 2 - 1;
-	int* masValues = new int[masLen];
-	int* masKeys = new int[masLen];
+	const int lenMas = m_maxSize * 2 - 1;
+	int* masValues = new int[lenMas];
+	int* masKeys = new int[lenMas];
 
-	for (int i = 0; i < masLen; ++i)
+	for (int i = 0; i < lenMas; ++i)
 	{
 		masValues[i] = rand() % 20;
 		masKeys[i] = i;
 	}
 
-	HashTable table(masValues, masKeys, masLen);
+	HashTable* table = new HashTable(masValues, masKeys, lenMas, m_maxSize);
 
-	for (int i = 0; i < masLen; ++i)
+	for (int i = 0; i < lenMas; ++i)
 		checkPresenceOfElements(table, masValues[i], masKeys[i]);
 }
 
@@ -101,25 +100,24 @@ void HashTableTester::destructor() const
 		masKeys[i] = i;
 	}
 
-	for (int i = 0; i < 1000; ++i)
+	for (int i = 0; i < 1000; ++i) //смотреть утечку памяти
 	{
-		HashTable* table = new HashTable(masValues, masKeys, masLen);
+		HashTable* table = new HashTable(masValues, masKeys, masLen, m_maxSize);
 		delete table;
 	}
 	
 }
 
-void HashTableTester::remove() const
+void HashTableTester::removeAndShow() const
 {
-	HashTable table;
+	HashTable* table = new HashTable(m_maxSize);
 	std::vector<int> values;
 	std::vector<int> anotherValues;
 	std::vector<int> keys;
 
-	//умножаю на два, чтобы были внешние цепочки и вычитаю единицу, чтобы они точно были не у всех строк. Благодаря этому буудт проверены оба случая, которые рассматриваются в удалении некоторого значения из таблицы.
-	for (int i = 0; i < m_maxSize * 2 - 1; ++i)
+	for (int i = 1; i < m_maxSize * 2; ++i)
 	{
-		table.addElem(i, i);
+		table->addElem(i, i);
 		values.push_back(i);
 		anotherValues.push_back(-i);
 		keys.push_back(i);
@@ -131,33 +129,34 @@ void HashTableTester::remove() const
 	
 	for (; iterAnotherValues != anotherValues.end(); ++iterAnotherValues, ++iterValues, ++iterKeys)
 	{
-		table.remove(*iterAnotherValues, *iterKeys); //попытка удалить значения, не хранящиеся в таблице
+		if (m_useConsoleOutput)
+		{
+			table->show();
+			std::cout << std::endl << "Hash: " << table->hash(*iterKeys) << ", value/key: " << *iterValues << "/" << *iterKeys << std::endl;
+		}
+			
+
+		table->remove(*iterAnotherValues, *iterKeys); //попытка удалить значения, не хранящиеся в таблице
 
 		//проверка наличия всех неудаленных вершин
 		for (auto secondIterValues = iterValues, secondIterKeys = iterKeys; secondIterValues != values.end(); ++secondIterValues, ++secondIterKeys)
-		{
 			checkPresenceOfElements(table, *secondIterValues, *secondIterKeys);
-		}
 
-		table.remove(*iterValues, *iterKeys);
+		table->remove(*iterValues, *iterKeys);
 		checkAbsenceOfElements(table, *iterValues, *iterKeys);
-
-		if (m_useConsoleOutput)
-			table.show();
 	}
 }
 
 void HashTableTester::squareBracketOperator() const
 {
-	HashTable table;
+	HashTable* table = new HashTable(m_maxSize);
 	std::vector<int> values;
 	std::vector<int> anotherValues;
 	std::vector<int> keys;
 
-	//умножаю на два, чтобы были внешние цепочки и вычитаю единицу, чтобы они точно были не у всех строк
-	for (int i = 0; i < m_maxSize * 2 - 1; ++i)
+	for (int i = 1; i < m_maxSize * 2; ++i)
 	{
-		table.addElem(i, i);
+		table->addElem(i, i);
 		values.push_back(i);
 		anotherValues.push_back(-i);
 		keys.push_back(i);
@@ -169,7 +168,7 @@ void HashTableTester::squareBracketOperator() const
 
 	for (; iterAnotherValues != anotherValues.end(); ++iterAnotherValues, ++iterValues, ++iterKeys)
 	{
-		table[*iterKeys] = *iterAnotherValues; 
+		table->operator[](*iterKeys) = *iterAnotherValues; 
 
 		checkPresenceOfElements(table, *iterAnotherValues, *iterKeys);
 		checkAbsenceOfElements(table, *iterValues, *iterKeys);
@@ -183,8 +182,7 @@ void HashTableTester::assignAndCopy() const
 	std::vector<int> anotherValues;
 	std::vector<int> keys;
 
-	//умножаю на два, чтобы были внешние цепочки и вычитаю единицу, чтобы они точно были не у всех строк
-	for (int i = 0; i < m_maxSize * 2 - 1; ++i)
+	for (int i = 1; i < m_maxSize * 2; ++i)
 	{
 		table1.addElem(i, i);
 		values.push_back(i);
@@ -201,7 +199,7 @@ void HashTableTester::assignAndCopy() const
 
 	//изменяем table2
 	for (; iterAnotherValues != anotherValues.end(); ++iterAnotherValues, ++iterKeys)
-		table2[*iterKeys] = *iterAnotherValues;
+		table2.operator[](*iterKeys) = *iterAnotherValues;
 
 	checkAssignInequality(table1, table2, keys); //убеждаемся, что изменение table2 не привело к изменению table1
 
@@ -214,7 +212,7 @@ void HashTableTester::assignAndCopy() const
 
 	//изменяем table1
 	for (; iterValues != values.end(); ++iterValues, ++iterKeys)
-		table1[*iterKeys] = *iterValues;
+		table1.operator[](*iterKeys) = *iterValues;
 
 	checkAssignInequality(table1, table2, keys); //убеждаемся, что изменение table1 не привело к изменению table2
 }
@@ -222,13 +220,13 @@ void HashTableTester::assignAndCopy() const
 void HashTableTester::checkAssignEquality(HashTable table1, HashTable table2, std::vector<int> keys) const
 {
 	for (auto key : keys)
-		assert(table1[key] == table2[key]);
+		assert(table1.operator[](key) == table2.operator[](key));
 }
 
 void HashTableTester::checkAssignInequality(HashTable table1, HashTable table2, std::vector<int> keys) const
 {
 	for (auto key : keys)
-		assert(table1[key] != table2[key]);
+		assert(table1.operator[](key) != table2.operator[](key));
 }
 
 #include <random>
@@ -236,10 +234,14 @@ void HashTableTester::checkAssignInequality(HashTable table1, HashTable table2, 
 int main()
 {
 
-	const int tableSize = 10;
+	bool usePrint = false;
+	for (int i = 0; i < 100; ++i)
+	{
+		const int tableSize = i;
+		HashTableTester HTTester(usePrint);
+		HTTester.test(tableSize);
+	}
 
-	HashTableTester HTTester(true);
-	HTTester.test(tableSize);
 
 	return 0;
 }
