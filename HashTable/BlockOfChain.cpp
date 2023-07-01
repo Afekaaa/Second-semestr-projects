@@ -1,6 +1,6 @@
 #include "HashTable.h"
 
-HashTable::BlockOfChain::BlockOfChain()
+HashTable::Node::Node()
 {
 	m_value = 0;
 	m_key = 0;
@@ -8,7 +8,7 @@ HashTable::BlockOfChain::BlockOfChain()
 	m_empty = true;
 }
 
-HashTable::BlockOfChain::BlockOfChain(const int value, const int key)
+HashTable::Node::Node(const int value, const int key)
 {
 	m_value = value;
 	m_key = key;
@@ -16,90 +16,88 @@ HashTable::BlockOfChain::BlockOfChain(const int value, const int key)
 	m_next = nullptr;
 }
 
-HashTable::BlockOfChain::BlockOfChain(BlockOfChain& otherString)
+HashTable::Node::Node(Node& otherString)
 {
 	if (!otherString.isEmpty())
 	{
 		m_value = otherString.value();
 		m_key = otherString.key();
 		m_empty = false;
+		m_next = nullptr;
+	}
+	else
+	{
+		m_value = 0;
+		m_key = 0;
+		m_empty = true;
+		m_next = nullptr;
 	}
 
-	m_next = nullptr;
+	Node* otherRunner = otherString.next();
+	Node* thisRunner = this;
 
-	BlockOfChain* otherRunner = &otherString;
-	BlockOfChain* thisRunner = this;
-
-	while (otherRunner = otherRunner->next())
+	while (otherRunner)
 	{
-		thisRunner->setNext(new BlockOfChain);
-		thisRunner->setKey(otherRunner->key());
-		thisRunner->setEmpty(false);
-		thisRunner = thisRunner->next();
-	}
-}
-
-HashTable::BlockOfChain::~BlockOfChain()
-{
-	if (m_next)
-	{
-		BlockOfChain* firstPtr = m_next;
-		BlockOfChain* secondPtr = firstPtr->next();
-
-		while (secondPtr)
+		if (otherRunner->isEmpty())
 		{
-			delete firstPtr;
-			firstPtr = secondPtr;
-			secondPtr = secondPtr->next();
+			thisRunner->setNext(new Node());
+			break;
 		}
+		else
+		{
+			int value = otherRunner->value();
+			int key = otherRunner->key();
 
-		delete firstPtr;
+			thisRunner->setNext(new Node(otherRunner->value(), otherRunner->key()));
+			thisRunner = thisRunner->next();
+			otherRunner = otherRunner->next();
+		}
 	}
 
 }
 
-bool HashTable::BlockOfChain::isEmpty() const
+bool HashTable::Node::isEmpty() const
 {
 	return m_empty;
 }
 
-void HashTable::BlockOfChain::setEmpty(const bool empty)
+void HashTable::Node::setEmpty(const bool empty)
 {
 	m_empty = empty;
 }
 
-int HashTable::BlockOfChain::value() const
+int& HashTable::Node::value()
 {
 	if (!isEmpty())
 		return m_value;
 	else
-		throw std::runtime_error("ѕопытка получить значение value из пустой хеш-таблицы.");
+		throw std::range_error("ѕопытка получить значение value из пустого блока внешней цепочки");
 }
 
-int HashTable::BlockOfChain::key() const
+int HashTable::Node::key() const
 {
 	if (!isEmpty())
 		return m_key;
 	else
-		throw std::runtime_error("ѕопытка получить значение key из пустой хеш-таблицы.");
+		throw std::range_error("ѕопытка получить значение key из пустого блока внешней цепочки");
 }
 
-HashTable::BlockOfChain* HashTable::BlockOfChain::next()
+HashTable::Node* HashTable::Node::next()
 {
 	return m_next;
 }
 
-void HashTable::BlockOfChain::setValue(const int value)
+void HashTable::Node::setValue(const int value)
 {
 	m_value = value;
 }
 
-void HashTable::BlockOfChain::setKey(const int key)
+void HashTable::Node::setKey(const int key)
 {
 	m_key = key;
 }
 
-void HashTable::BlockOfChain::setNext(const BlockOfChain* nextString)
+void HashTable::Node::setNext(Node* nextString)
 {
-	m_next->setNext(nextString);
+	m_next = nextString;
 }
