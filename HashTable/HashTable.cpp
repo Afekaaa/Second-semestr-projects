@@ -265,6 +265,8 @@ int& HashTable::operator [] (const int key)
 
 		runner = runner->next();
 	}
+
+	throw std::domain_error("Попытка обратиться к элементу по ключу, отсутсвующему в хеш-таблице");
 }
 
 
