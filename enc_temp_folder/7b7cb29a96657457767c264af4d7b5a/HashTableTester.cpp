@@ -264,6 +264,6 @@ int main()
 	_CrtSetReportMode(_CRT_WARN, _CRTDBG_MODE_FILE);
 	_CrtSetReportFile(_CRT_WARN, _CRTDBG_FILE_STDOUT);
 
-	_CrtMemDumpAllObjectsSince(&_ms); // смотреть вывод к консоле
+	_CrtMemDumpAllObjectsSince(&_ms);
 	return 0;
 }

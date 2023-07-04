@@ -222,8 +222,19 @@ HashTable& HashTable::operator = (HashTable otherHashTable)
 	{
 		for (int i = 0; i < m_size; ++i)
 		{
-			if (m_hashTable[i])
-				delete m_hashTable[i];
+			if (!m_hashTable[i])
+				continue;
+			Node* firstPtr = m_hashTable[i];
+			Node* secondPtr = firstPtr->next();
+
+			while (secondPtr)
+			{
+				delete firstPtr;
+				firstPtr = secondPtr;
+				secondPtr = secondPtr->next();
+			}
+
+			delete firstPtr;
 		}
 		delete[] m_hashTable;
 
